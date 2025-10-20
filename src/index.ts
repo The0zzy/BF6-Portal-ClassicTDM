@@ -669,13 +669,12 @@ export function OnPlayerUndeploy(eventPlayer: mod.Player) {
 /* Loop Handlers */
 
 export function OngoingPlayer(eventPlayer: mod.Player) {
-  if (
-    (!gameStarted || gameEnded) &&
-    !mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsDead)
-  ) {
-    mod.EnableAllInputRestrictions(eventPlayer, true);
-  } else {
-    mod.EnableAllInputRestrictions(eventPlayer, false);
+  if (!mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsDead)) {
+    if (!gameStarted || gameEnded) {
+      mod.EnableAllInputRestrictions(eventPlayer, true);
+    } else {
+      mod.EnableAllInputRestrictions(eventPlayer, false);
+    }
   }
 }
 
