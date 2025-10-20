@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3 uid="uid://db5h16qvvhqmd"]
 
-[ext_resource type="PackedScene" path="res://objects/entities/HQ_PlayerSpawner.tscn" id="1_d6db8"]
+[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/HQ_PlayerSpawner.tscn" id="1_d6db8"]
 [ext_resource type="PackedScene" uid="uid://jv31so3xcr7p" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.tscn" id="2_cjtf1"]
-[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/SpawnPoint.tscn" id="3_i28wp"]
+[ext_resource type="PackedScene" path="res://objects/entities/SpawnPoint.tscn" id="3_i28wp"]
 [ext_resource type="PackedScene" path="res://objects/Gameplay/Common/CombatArea.tscn" id="4_gtdfs"]
 [ext_resource type="PackedScene" path="res://objects/Global/Generic/Common/Props/HighwaySignPole_01.tscn" id="5_3b2if"]
 [ext_resource type="PackedScene" path="res://static/MP_Capstone_Terrain.tscn" id="5_av2qy"]

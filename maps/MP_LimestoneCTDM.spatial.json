@@ -1348,7 +1348,7 @@
                 "y": 64.1062,
                 "z": 88.0262
             },
-            "id": "ChairFolding_01_A"
+            "id": "GameInProgressSpawner/ChairFolding_01_A"
         },
         {
             "name": "ChairFolding_01_A2",
@@ -1374,7 +1374,7 @@
                 "y": 64.4062,
                 "z": 91.0141
             },
-            "id": "ChairFolding_01_A2"
+            "id": "GameInProgressSpawner/ChairFolding_01_A2"
         },
         {
             "name": "ChairFolding_01_A3",
@@ -1400,7 +1400,7 @@
                 "y": 65.5595,
                 "z": 99.6027
             },
-            "id": "ChairFolding_01_A3"
+            "id": "GameInProgressSpawner/ChairFolding_01_A3"
         },
         {
             "name": "ChairFolding_01_A4",
@@ -1426,7 +1426,7 @@
                 "y": 62.6814,
                 "z": 85.8789
             },
-            "id": "ChairFolding_01_A4"
+            "id": "GameInProgressSpawner/ChairFolding_01_A4"
         },
         {
             "name": "ChairFolding_01_A5",
@@ -1452,7 +1452,7 @@
                 "y": 62.6814,
                 "z": 69.4515
             },
-            "id": "ChairFolding_01_A5"
+            "id": "GameInProgressSpawner/ChairFolding_01_A5"
         },
         {
             "name": "ChairFolding_01_A6",
@@ -1478,7 +1478,7 @@
                 "y": 63.0204,
                 "z": 57.3316
             },
-            "id": "ChairFolding_01_A6"
+            "id": "GameInProgressSpawner/ChairFolding_01_A6"
         },
         {
             "name": "ChairFolding_01_A7",
@@ -1504,7 +1504,7 @@
                 "y": 64.813,
                 "z": 66.3936
             },
-            "id": "ChairFolding_01_A7"
+            "id": "GameInProgressSpawner/ChairFolding_01_A7"
         },
         {
             "name": "ChairFolding_01_A8",
@@ -1530,7 +1530,7 @@
                 "y": 62.3883,
                 "z": 68.5987
             },
-            "id": "ChairFolding_01_A8"
+            "id": "GameInProgressSpawner/ChairFolding_01_A8"
         },
         {
             "name": "ChairFolding_01_A9",
@@ -1556,7 +1556,7 @@
                 "y": 60.4734,
                 "z": 59.3658
             },
-            "id": "ChairFolding_01_A9"
+            "id": "GameInProgressSpawner/ChairFolding_01_A9"
         },
         {
             "name": "ChairFolding_01_A10",
@@ -1582,7 +1582,7 @@
                 "y": 60.4734,
                 "z": 69.0743
             },
-            "id": "ChairFolding_01_A10"
+            "id": "GameInProgressSpawner/ChairFolding_01_A10"
         },
         {
             "name": "ChairFolding_01_A11",
@@ -1608,7 +1608,7 @@
                 "y": 60.4734,
                 "z": 66.8081
             },
-            "id": "ChairFolding_01_A11"
+            "id": "GameInProgressSpawner/ChairFolding_01_A11"
         },
         {
             "name": "ChairFolding_01_A12",
@@ -1634,7 +1634,7 @@
                 "y": 61.0038,
                 "z": 80.302
             },
-            "id": "ChairFolding_01_A12"
+            "id": "GameInProgressSpawner/ChairFolding_01_A12"
         },
         {
             "name": "ChairFolding_01_A13",
@@ -1660,7 +1660,7 @@
                 "y": 64.5075,
                 "z": 90.2799
             },
-            "id": "ChairFolding_01_A13"
+            "id": "GameInProgressSpawner/ChairFolding_01_A13"
         },
         {
             "name": "ChairFolding_01_A14",
@@ -1686,7 +1686,7 @@
                 "y": 64.5242,
                 "z": 93.1007
             },
-            "id": "ChairFolding_01_A14"
+            "id": "GameInProgressSpawner/ChairFolding_01_A14"
         },
         {
             "name": "ChairFolding_01_A15",
@@ -1712,7 +1712,7 @@
                 "y": 66.5205,
                 "z": 92.4095
             },
-            "id": "ChairFolding_01_A15"
+            "id": "GameInProgressSpawner/ChairFolding_01_A15"
         },
         {
             "name": "ChairFolding_01_A16",
@@ -1738,7 +1738,7 @@
                 "y": 67.4744,
                 "z": 104.053
             },
-            "id": "ChairFolding_01_A16"
+            "id": "GameInProgressSpawner/ChairFolding_01_A16"
         },
         {
             "name": "ChairFolding_01_A17",
@@ -1764,7 +1764,7 @@
                 "y": 68.1164,
                 "z": 115.478
             },
-            "id": "ChairFolding_01_A17"
+            "id": "GameInProgressSpawner/ChairFolding_01_A17"
         },
         {
             "name": "ChairFolding_01_A18",
@@ -1790,7 +1790,7 @@
                 "y": 70.0031,
                 "z": 139.104
             },
-            "id": "ChairFolding_01_A18"
+            "id": "GameInProgressSpawner/ChairFolding_01_A18"
         },
         {
             "name": "ChairFolding_01_A19",
@@ -1816,7 +1816,7 @@
                 "y": 69.4354,
                 "z": 136.305
             },
-            "id": "ChairFolding_01_A19"
+            "id": "GameInProgressSpawner/ChairFolding_01_A19"
         },
         {
             "name": "ChairFolding_01_A20",
@@ -1842,7 +1842,7 @@
                 "y": 68.9982,
                 "z": 139.195
             },
-            "id": "ChairFolding_01_A20"
+            "id": "GameInProgressSpawner/ChairFolding_01_A20"
         },
         {
             "name": "ChairFolding_01_A21",
@@ -1868,7 +1868,7 @@
                 "y": 68.8762,
                 "z": 139.545
             },
-            "id": "ChairFolding_01_A21"
+            "id": "GameInProgressSpawner/ChairFolding_01_A21"
         },
         {
             "name": "ChairFolding_01_A22",
@@ -1894,7 +1894,7 @@
                 "y": 68.9284,
                 "z": 127.142
             },
-            "id": "ChairFolding_01_A22"
+            "id": "GameInProgressSpawner/ChairFolding_01_A22"
         },
         {
             "name": "ChairFolding_01_A23",
@@ -1920,7 +1920,7 @@
                 "y": 66.5241,
                 "z": 113.723
             },
-            "id": "ChairFolding_01_A23"
+            "id": "GameInProgressSpawner/ChairFolding_01_A23"
         },
         {
             "name": "ChairFolding_01_A24",
@@ -1946,7 +1946,7 @@
                 "y": 64.5602,
                 "z": 100.378
             },
-            "id": "ChairFolding_01_A24"
+            "id": "GameInProgressSpawner/ChairFolding_01_A24"
         },
         {
             "name": "ChairFolding_01_A25",
@@ -1972,7 +1972,7 @@
                 "y": 62.6814,
                 "z": 80.266
             },
-            "id": "ChairFolding_01_A25"
+            "id": "GameInProgressSpawner/ChairFolding_01_A25"
         },
         {
             "name": "ChairFolding_01_A26",
@@ -1998,7 +1998,7 @@
                 "y": 64.8435,
                 "z": 96.8408
             },
-            "id": "ChairFolding_01_A26"
+            "id": "GameInProgressSpawner/ChairFolding_01_A26"
         },
         {
             "name": "ChairFolding_01_A27",
@@ -2024,7 +2024,7 @@
                 "y": 65.7369,
                 "z": 101.249
             },
-            "id": "ChairFolding_01_A27"
+            "id": "GameInProgressSpawner/ChairFolding_01_A27"
         },
         {
             "name": "ChairFolding_01_A28",
@@ -2050,7 +2050,7 @@
                 "y": 65.5524,
                 "z": 92.8333
             },
-            "id": "ChairFolding_01_A28"
+            "id": "GameInProgressSpawner/ChairFolding_01_A28"
         },
         {
             "name": "ChairFolding_01_A29",
@@ -2076,7 +2076,7 @@
                 "y": 65.741,
                 "z": 111.626
             },
-            "id": "ChairFolding_01_A29"
+            "id": "GameInProgressSpawner/ChairFolding_01_A29"
         },
         {
             "name": "ChairFolding_01_A30",
@@ -2102,7 +2102,7 @@
                 "y": 65.741,
                 "z": 109.848
             },
-            "id": "ChairFolding_01_A30"
+            "id": "GameInProgressSpawner/ChairFolding_01_A30"
         },
         {
             "name": "ChairFolding_01_A31",
@@ -2128,7 +2128,7 @@
                 "y": 68.6727,
                 "z": 123.432
             },
-            "id": "ChairFolding_01_A31"
+            "id": "GameInProgressSpawner/ChairFolding_01_A31"
         },
         {
             "name": "ChairFolding_01_A32",
@@ -2154,7 +2154,7 @@
                 "y": 66.2382,
                 "z": 114.828
             },
-            "id": "ChairFolding_01_A32"
+            "id": "GameInProgressSpawner/ChairFolding_01_A32"
         },
         {
             "name": "ChairFolding_01_A33",
@@ -2180,7 +2180,7 @@
                 "y": 67.9425,
                 "z": 124.773
             },
-            "id": "ChairFolding_01_A33"
+            "id": "GameInProgressSpawner/ChairFolding_01_A33"
         },
         {
             "name": "ChairFolding_01_A34",
@@ -2206,7 +2206,7 @@
                 "y": 63.1849,
                 "z": 63.2648
             },
-            "id": "ChairFolding_01_A34"
+            "id": "GameInProgressSpawner/ChairFolding_01_A34"
         },
         {
             "name": "ChairFolding_01_A35",
@@ -2232,7 +2232,7 @@
                 "y": 65.741,
                 "z": 119.235
             },
-            "id": "ChairFolding_01_A35"
+            "id": "GameInProgressSpawner/ChairFolding_01_A35"
         }
     ],
     "Static": [
