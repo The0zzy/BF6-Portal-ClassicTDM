@@ -196,11 +196,11 @@ function createSpawnPoints() {
   do {
     const spawnPoint = mod.GetSpatialObject(spawnPointId); // Even with an invalid ID it returns a SpawnObject so we have to check it by "hand"
     const spawnPointPosition = mod.GetObjectPosition(spawnPoint);
-    const spawnPointX = mod.XComponentOf(spawnPointPosition); //Not used for check since for some reason it's not 0 but 1e-7...
+    const spawnPointX = mod.XComponentOf(spawnPointPosition);
     const spawnPointY = mod.YComponentOf(spawnPointPosition);
     const spawnPointZ = mod.ZComponentOf(spawnPointPosition);
 
-    if (spawnPointY === 0 && spawnPointZ === 0) {
+    if (spawnPointX < 0.01 && spawnPointY < 0.01 && spawnPointZ < 0.01) {
       // So far the only way I know to check if something exists
       break;
     }
