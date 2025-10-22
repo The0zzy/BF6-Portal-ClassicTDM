@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://d0dkemsqqkwly"]
+[gd_scene load_steps=9 format=3 uid="uid://d3pbv08dq2bkc"]
 
 [ext_resource type="PackedScene" path="res://objects/Gameplay/Common/HQ_PlayerSpawner.tscn" id="1_4gqfe"]
 [ext_resource type="PackedScene" uid="uid://jv31so3xcr7p" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.tscn" id="2_cjtf1"]
@@ -7,8 +7,6 @@
 [ext_resource type="PackedScene" path="res://objects/Gameplay/Common/CombatArea.tscn" id="4_owl2c"]
 [ext_resource type="PackedScene" path="res://static/MP_Limestone_Assets.tscn" id="5_owl2c"]
 [ext_resource type="PackedScene" path="res://objects/Gameplay/Common/DeployCam.tscn" id="7_pa1ei"]
-[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/AreaTrigger.tscn" id="8_hc05k"]
-[ext_resource type="Script" uid="uid://ck5uniw0pl6u8" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.gd" id="9_dpage"]
 [ext_resource type="PackedScene" path="res://objects/Shared/Generic/Common/Props/ChairFolding_01_A.tscn" id="11_xe48y"]
 
 [node name="MP_Limestone" type="Node3D"]
@@ -16,27 +14,6 @@
 [node name="DeployCam" parent="." instance=ExtResource("7_pa1ei")]
 transform = Transform3D(1, 0, 4.37114e-08, -4.37114e-08, 1.91069e-15, 1, 0, -1, 1.91069e-15, 331, 165, 93)
 ObjId = 444
-
-[node name="GAMESTARTED_HQS" type="Node3D" parent="."]
-transform = Transform3D(0.999941, 0, 0.0108906, 0, 1, 0, -0.0108906, 0, 0.999941, 332.296, 79.0111, 28.3832)
-
-[node name="TEAM_1_HQ_GAMESTARTED" parent="GAMESTARTED_HQS" instance=ExtResource("1_4gqfe")]
-ObjId = 11
-
-[node name="TEAM_2_HQ_GAMESTARTED" parent="GAMESTARTED_HQS" instance=ExtResource("1_4gqfe")]
-Team = 2
-AltTeam = 1
-ObjId = 12
-
-[node name="AreaTrigger" parent="GAMESTARTED_HQS" node_paths=PackedStringArray("Area") instance=ExtResource("8_hc05k")]
-ObjId = 1000
-Area = NodePath("PolygonVolume")
-
-[node name="PolygonVolume" type="Node3D" parent="GAMESTARTED_HQS/AreaTrigger"]
-script = ExtResource("9_dpage")
-points = PackedVector2Array(-1.56073, -1.54599, -1.63623, 1.58917, 1.48193, 1.56259, 1.60538, -1.43287)
-color = Color(0, 0.6, 0.7, 0.42)
-metadata/_custom_type_script = "uid://ck5uniw0pl6u8"
 
 [node name="TEAM_2_HQ" parent="." node_paths=PackedStringArray("InfantrySpawns") instance=ExtResource("1_4gqfe")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 371.092, 64.3295, 96.0368)

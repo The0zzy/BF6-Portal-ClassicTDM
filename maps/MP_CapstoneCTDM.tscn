@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://db5h16qvvhqmd"]
+[gd_scene load_steps=10 format=3 uid="uid://cd0tnb21srah8"]
 
 [ext_resource type="PackedScene" path="res://objects/Gameplay/Common/HQ_PlayerSpawner.tscn" id="1_d6db8"]
 [ext_resource type="PackedScene" uid="uid://jv31so3xcr7p" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.tscn" id="2_cjtf1"]
@@ -7,8 +7,6 @@
 [ext_resource type="PackedScene" path="res://objects/Global/Generic/Common/Props/HighwaySignPole_01.tscn" id="5_3b2if"]
 [ext_resource type="PackedScene" path="res://static/MP_Capstone_Terrain.tscn" id="5_av2qy"]
 [ext_resource type="PackedScene" path="res://static/MP_Capstone_Assets.tscn" id="6_psyxy"]
-[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/AreaTrigger.tscn" id="9_2w6dr"]
-[ext_resource type="Script" uid="uid://ck5uniw0pl6u8" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.gd" id="10_0rauf"]
 [ext_resource type="PackedScene" path="res://objects/Shared/Props/Basketball_01.tscn" id="11_0rauf"]
 [ext_resource type="PackedScene" path="res://objects/Gameplay/Common/DeployCam.tscn" id="11_2w6dr"]
 
@@ -362,27 +360,3 @@ ObjId = 9026
 [node name="Basketball_27" parent="GameInProgressSpawner" instance=ExtResource("11_0rauf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.6247, 129.536, 50.6335)
 ObjId = 9027
-
-[node name="InProgressHQ" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 81.8875, 235.736, 67.516)
-
-[node name="HQ_PlayerSpawner" parent="InProgressHQ" instance=ExtResource("1_d6db8")]
-AltTeam = 0
-ObjId = 11
-
-[node name="HQ_PlayerSpawner2" parent="InProgressHQ" instance=ExtResource("1_d6db8")]
-Team = 2
-AltTeam = 0
-ObjId = 12
-
-[node name="AreaTrigger" parent="InProgressHQ" node_paths=PackedStringArray("Area") instance=ExtResource("9_2w6dr")]
-ObjId = 1000
-Area = NodePath("PolygonVolume")
-
-[node name="PolygonVolume" type="Node3D" parent="InProgressHQ/AreaTrigger"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -9.66626, 0)
-script = ExtResource("10_0rauf")
-points = PackedVector2Array(-2.66581, -2.69712, -2.56545, 2.56153, 2.75341, 2.80238, 3.05448, -3.03833)
-height = 30.0
-color = Color(0, 0.6, 0.7, 0.42)
-metadata/_custom_type_script = "uid://ck5uniw0pl6u8"

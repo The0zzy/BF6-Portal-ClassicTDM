@@ -1,4 +1,4 @@
-/* Types */
+//#region Types
 
 interface GameModeConfig {
   score: number;
@@ -11,9 +11,6 @@ interface GameModeConfig {
   team2ID: number;
   hqRoundStartTeam1: number;
   hqRoundStartTeam2: number;
-  hqInProgressTeam1: number;
-  hqInProgressTeam2: number;
-  respawnAreaTriggerID: number;
   maxStartingAmmo: boolean;
   startSpawnPointID: number;
 }
@@ -24,6 +21,10 @@ interface PlayerStats {
   a: number;
   hs: number;
 }
+
+//#endregion
+
+//#region Config
 
 /* Mode config - Only modify what's inside this object */
 const GAMEMODE_CONFIG: GameModeConfig = {
@@ -38,17 +39,13 @@ const GAMEMODE_CONFIG: GameModeConfig = {
   // Beginning HQs - place these in Godot where players spawn at match start
   hqRoundStartTeam1: 1,
   hqRoundStartTeam2: 2,
-  // In-progress HQs - place these outside the map, surrounded by area trigger
-  hqInProgressTeam1: 11,
-  hqInProgressTeam2: 12,
-  respawnAreaTriggerID: 1000, // AreaTrigger that surrounds the in-progress HQs
   maxStartingAmmo: true,
   startSpawnPointID: 9001, // Starting ID for spawn point SpatialObjects. Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
 };
 
-/* Gamemode variables */
+//#endregion
 
-const spawners: mod.Vector[] = [];
+//#region Variables
 
 const UIWIDGET_TIMER_BEGINNING_ID = "UIWidgetTimerBeginning";
 const UIWIDGET_TIMER_BEGINNING_TEXT_ID = "UIWidgetTimerBeginningText";
@@ -60,6 +57,8 @@ const UIWIDGET_SCORE_TEAM1_NAME_ID = "UiWidgetTeam1Name";
 const UIWIDGET_SCORE_TEAM2_SCORE_ID = "UiWidgetTeam2Score";
 const UIWIDGET_SCORE_TEAM2_NAME_ID = "UiWidgetTeam2Name";
 const UIWIDGET_SCORE_FIRSTTO_ID = "UiWidgetFirstTo";
+
+const spawners: mod.Vector[] = [];
 
 const playersStats: { [id: number]: PlayerStats } = {};
 
@@ -92,7 +91,9 @@ const winProgressStages = {
   },
 };
 
-/* Helper Functions */
+//#endregion
+
+//#region Audio Helpers
 
 function playSFX(sfxId: mod.RuntimeSpawn_Common) {
   const sfx = mod.SpawnObject(
@@ -149,10 +150,15 @@ function playProgressSFX(team1: mod.Team, team2: mod.Team) {
   }
 }
 
+//#endregion
+
+//#region Spawn Point Helpers
+
 function getFurthestSpawnPointFromEnemies(
   respawnedPlayer: mod.Player
 ): mod.Vector {
   const players = mod.AllPlayers();
+  const spawnsMap: { distance: number; spawnPoint: mod.Vector }[] = [];
 
   let furthestSpawnPoint = spawners[0];
   let furthestSpawnPointDistance = 0;
@@ -182,12 +188,25 @@ function getFurthestSpawnPointFromEnemies(
       nearestPlayerDistance = Math.min(nearestPlayerDistance, distanceBetween);
     }
 
+    spawnsMap.push({
+      spawnPoint: spawnPointVector,
+      distance: nearestPlayerDistance,
+    });
     if (furthestSpawnPointDistance < nearestPlayerDistance) {
-      furthestSpawnPoint = spawnPointVector;
       furthestSpawnPointDistance = nearestPlayerDistance;
     }
   }
+  const availableSpawns = spawnsMap.filter(
+    ({ distance }) => distance >= furthestSpawnPointDistance * 0.8
+  );
 
+  // We want a spawn that is among the furthest 20% from enemies, so we randomize among those
+  if (availableSpawns.length > 0) {
+    const randomIndex = Math.floor(Math.random() * availableSpawns.length);
+    return availableSpawns[randomIndex].spawnPoint;
+  }
+
+  // Fallback to furthest spawn if no spawns meet criteria somehow
   return furthestSpawnPoint;
 }
 
@@ -200,8 +219,8 @@ function createSpawnPoints() {
     const spawnPointY = mod.YComponentOf(spawnPointPosition);
     const spawnPointZ = mod.ZComponentOf(spawnPointPosition);
 
-    if (spawnPointX < 0.01 && spawnPointY < 0.01 && spawnPointZ < 0.01) {
-      // So far the only way I know to check if something exists
+    if (spawnPointY === 0 && spawnPointZ === 0) {
+      // Better check for invalid spawn points - Y and Z being exactly 0 typically indicates invalid position
       break;
     }
 
@@ -211,7 +230,9 @@ function createSpawnPoints() {
   } while (spawnPointId);
 }
 
-/* Scoreboard helpers */
+//#endregion
+
+//#region Scoreboard Helpers
 
 function createScoreboard() {
   mod.SetScoreboardColumnNames(
@@ -250,7 +271,9 @@ const updateScoreboard = (player: mod.Player, playerStats: PlayerStats) => {
   );
 };
 
-/* UI Helpers - Beginning Timer*/
+//#endregion
+
+//#region Beginning Timer UI
 
 function createBeginningTimer() {
   mod.AddUIContainer(
@@ -323,7 +346,9 @@ function deleteTimerWidget() {
   }
 }
 
-/* UI Helpers - Score */
+//#endregion
+
+//#region Score UI
 
 function createUIScore() {
   mod.AddUIContainer(
@@ -535,7 +560,9 @@ function deleteUIScore() {
   }
 }
 
-/* Game State custom functions */
+//#endregion
+
+//#region Game State Helpers
 
 async function endGame(winningTeam: mod.Team, losingTeam: mod.Team) {
   gameEnded = true;
@@ -544,32 +571,22 @@ async function endGame(winningTeam: mod.Team, losingTeam: mod.Team) {
   await mod.Wait(5);
 }
 
-/* Event Handlers */
+//#endregion
+
+//#region Game Event Handlers
 
 export async function OnGameModeStarted() {
   createSpawnPoints();
   createUIScore();
   createBeginningTimer();
 
-  const team1HQ = mod.GetHQ(GAMEMODE_CONFIG.hqRoundStartTeam1);
-  const team2HQ = mod.GetHQ(GAMEMODE_CONFIG.hqRoundStartTeam2);
-  const team1HQGameStarted = mod.GetHQ(GAMEMODE_CONFIG.hqInProgressTeam1);
-  const team2HQGameStarted = mod.GetHQ(GAMEMODE_CONFIG.hqInProgressTeam2);
-
-  mod.EnableHQ(team1HQGameStarted, false);
-  mod.EnableHQ(team2HQGameStarted, false);
   mod.SetGameModeTargetScore(GAMEMODE_CONFIG.score);
   mod.SetGameModeTimeLimit(GAMEMODE_CONFIG.timeLimit);
   createScoreboard();
 
   await mod.Wait(GAMEMODE_CONFIG.freezeTime);
   gameStarted = true;
-  mod.EnableHQ(team1HQ, false);
-  mod.EnableHQ(team2HQ, false);
-  mod.EnableHQ(team1HQGameStarted, true);
-  mod.EnableHQ(team2HQGameStarted, true);
   playVO(mod.VoiceOverEvents2D.RoundStartGeneric);
-
   deleteTimerWidget();
 }
 
@@ -586,6 +603,10 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
 }
 
 export function OnPlayerDeployed(eventPlayer: mod.Player) {
+  if (gameStarted) {
+    mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer), 0);
+  }
+
   if (GAMEMODE_CONFIG.maxStartingAmmo) {
     mod.SetInventoryMagazineAmmo(
       eventPlayer,
@@ -597,16 +618,6 @@ export function OnPlayerDeployed(eventPlayer: mod.Player) {
       mod.InventorySlots.SecondaryWeapon,
       9999
     );
-  }
-}
-
-export function OnPlayerEnterAreaTrigger(
-  eventPlayer: mod.Player,
-  eventAreaTrigger: mod.AreaTrigger
-) {
-  if (mod.GetObjId(eventAreaTrigger) === GAMEMODE_CONFIG.respawnAreaTriggerID) {
-    // The HQ is surrounded by the zone, teleporting any players to the furthest point available
-    mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer), 0);
   }
 }
 
@@ -666,7 +677,9 @@ export function OnPlayerUndeploy(eventPlayer: mod.Player) {
   updateScoreboard(eventPlayer, playersStats[eventPlayerId]);
 }
 
-/* Loop Handlers */
+//#endregion
+
+//#region Loop Handlers
 
 export function OngoingPlayer(eventPlayer: mod.Player) {
   if (!mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsDead)) {
@@ -714,3 +727,5 @@ export function OngoingGlobal() {
     remainingMilliseconds
   );
 }
+
+//#endregion
