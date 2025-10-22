@@ -235,6 +235,7 @@ function createSpawnPoints() {
 //#region Scoreboard Helpers
 
 function createScoreboard() {
+  mod.SetScoreboardType(mod.ScoreboardType.CustomTwoTeams);
   mod.SetScoreboardColumnNames(
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN1_HEADER),
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN2_HEADER),
@@ -242,13 +243,10 @@ function createScoreboard() {
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN4_HEADER),
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER)
   );
-  mod.SetScoreboardHeader(
-    mod.Message(mod.stringkeys.SCOREBOARD_TEAM1_NAME),
-    mod.Message(mod.stringkeys.SCOREBOARD_TEAM2_NAME)
-  );
+  updateScoreboardHeader();
   mod.SetScoreboardColumnWidths(250, 100, 100, 100, 250);
   mod.SetScoreboardSorting(1, false); // Sort by kills descending
-
+  updateScoreboardHeader();
   const allPlayers = mod.AllPlayers();
   for (let i = 0; i < mod.CountOf(allPlayers); i++) {
     const player: mod.Player = mod.ValueInArray(allPlayers, i);
@@ -257,16 +255,26 @@ function createScoreboard() {
   }
 }
 
+function updateScoreboardHeader() {
+  const team1Score = mod.GetGameModeScore(mod.GetTeam(GAMEMODE_CONFIG.team1ID));
+  const team2Score = mod.GetGameModeScore(mod.GetTeam(GAMEMODE_CONFIG.team2ID));
+
+  mod.SetScoreboardHeader(
+    mod.Message(mod.stringkeys.SCOREBOARD_HEADER, team1Score),
+    mod.Message(mod.stringkeys.SCOREBOARD_HEADER, team2Score)
+  );
+}
+
 const updateScoreboard = (player: mod.Player, playerStats: PlayerStats) => {
   if (!playerStats) {
     return;
   }
   mod.SetScoreboardPlayerValues(
     player,
-    (playerStats.k / (playerStats.d > 0 ? playerStats.d : 1)) * 1000, // K/D ratio, hacky since we can't have decimals
     playerStats.k,
     playerStats.d,
     playerStats.a,
+    (playerStats.k / (playerStats.d > 0 ? playerStats.d : 1)) * 1000, // K/D ratio, hacky since we can't have decimals
     playerStats.k > 0 ? Math.floor((playerStats.hs / playerStats.k) * 100) : 0 // HS% calculation
   );
 };
@@ -328,10 +336,10 @@ function updateBeginningTimer(
       remainingSeconds > 5
         ? mod.Message(mod.stringkeys.UISCORE_TIMER_BEGINNING, remainingSeconds)
         : mod.Message(
-            mod.stringkeys.UISCORE_TIMER_BEGINNING_MS,
-            remainingSeconds,
-            remainingMilliseconds
-          );
+          mod.stringkeys.UISCORE_TIMER_BEGINNING_MS,
+          remainingSeconds,
+          remainingMilliseconds
+        );
 
     mod.SetUITextLabel(timerBeginningWidgetText, message);
   }
@@ -653,6 +661,7 @@ export function OnPlayerEarnedKill(
 
   mod.SetGameModeScore(playerTeam, mod.GetGameModeScore(playerTeam) + 1);
   updateScoreboard(eventPlayer, playersStats[playerId]);
+  updateScoreboardHeader();
   updateUIScore();
   if (mod.GetGameModeScore(playerTeam) >= GAMEMODE_CONFIG.score) {
     // because the gamemode end doesn't actually end at the score, we have to trigger that "manually"
