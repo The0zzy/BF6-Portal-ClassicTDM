@@ -244,8 +244,11 @@ function createScoreboard() {
     mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER)
   );
   updateScoreboardHeader();
-  mod.SetScoreboardColumnWidths(250, 100, 100, 100, 250);
-  mod.SetScoreboardSorting(1, false); // Sort by kills descending
+  mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250);
+  // BUG
+  // scoreboard sorting using the two parameter overload is 0-based index but documented as 1-based index
+  // scoreboard sorting using the single parameter overload is 1-based index
+  mod.SetScoreboardSorting(0, false); // Sort by kills descending
   updateScoreboardHeader();
   const allPlayers = mod.AllPlayers();
   for (let i = 0; i < mod.CountOf(allPlayers); i++) {
