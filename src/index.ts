@@ -156,42 +156,33 @@ function getFurthestSpawnPointFromEnemies(
   respawnedPlayer: mod.Player
 ): mod.Vector {
   const players = mod.AllPlayers();
+  const enemyTeam = mod.Equals(mod.GetTeam(respawnedPlayer), mod.GetTeam(1))
+    ? mod.GetTeam(2)
+    : mod.GetTeam(1);
   const spawnsMap: { distance: number; spawnPoint: mod.Vector }[] = [];
 
   let furthestSpawnPoint = spawners[0];
   let furthestSpawnPointDistance = 0;
 
   for (const spawnPointVector of spawners) {
-    let nearestPlayerDistance = 999999999;
-
-    for (let i = 0; i < mod.CountOf(players); i++) {
-      const player: mod.Player = mod.ValueInArray(players, i);
-
-      if (
-        mod.GetSoldierState(player, mod.SoldierStateBool.IsDead) ||
-        mod.Equals(mod.GetTeam(player), mod.GetTeam(respawnedPlayer))
-      ) {
-        continue;
-      }
-
-      const playerVector = mod.GetSoldierState(
-        player,
-        mod.SoldierStateVector.GetPosition
-      );
-      const distanceBetween = mod.DistanceBetween(
-        spawnPointVector,
-        playerVector
-      );
-
-      nearestPlayerDistance = Math.min(nearestPlayerDistance, distanceBetween);
+    let closestEnemyPlayer = mod.ClosestPlayerTo(spawnPointVector, enemyTeam);
+    if (!mod.IsPlayerValid(closestEnemyPlayer)) {
+      continue;
     }
+    let closestPlayerDistance = mod.DistanceBetween(
+      spawnPointVector,
+      mod.GetSoldierState(
+        closestEnemyPlayer,
+        mod.SoldierStateVector.GetPosition
+      )
+    );
 
     spawnsMap.push({
       spawnPoint: spawnPointVector,
-      distance: nearestPlayerDistance,
+      distance: closestPlayerDistance,
     });
-    if (furthestSpawnPointDistance < nearestPlayerDistance) {
-      furthestSpawnPointDistance = nearestPlayerDistance;
+    if (furthestSpawnPointDistance < closestPlayerDistance) {
+      furthestSpawnPointDistance = closestPlayerDistance;
     }
   }
   const availableSpawns = spawnsMap.filter(
