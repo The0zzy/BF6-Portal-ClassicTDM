@@ -155,7 +155,6 @@ function playProgressSFX(team1: mod.Team, team2: mod.Team) {
 function getFurthestSpawnPointFromEnemies(
   respawnedPlayer: mod.Player
 ): mod.Vector {
-  const players = mod.AllPlayers();
   const enemyTeam = mod.Equals(mod.GetTeam(respawnedPlayer), mod.GetTeam(1))
     ? mod.GetTeam(2)
     : mod.GetTeam(1);
@@ -183,6 +182,7 @@ function getFurthestSpawnPointFromEnemies(
     });
     if (furthestSpawnPointDistance < closestPlayerDistance) {
       furthestSpawnPointDistance = closestPlayerDistance;
+      furthestSpawnPoint = spawnPointVector;
     }
   }
   const availableSpawns = spawnsMap.filter(
