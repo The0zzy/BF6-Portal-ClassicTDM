@@ -2,16 +2,16 @@
   "name": "bf6-portal-classictdm",
   "version": "1.0.0",
   "description": "A Classic Team Deathmatch gamemode for Battlefield 6 Portal",
-  "homepage": "https://github.com/MagneticNeedle/PortalV2Template#readme",
+  "homepage": "https://bfportal.gg",
   "bugs": {
-    "url": "https://github.com/MagneticNeedle/PortalV2Template/issues"
+    "url": "https://discord.bfportal.gg"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MagneticNeedle/PortalV2Template/issues"
+    "url": "https://github.com/Sygnano/BF6-Portal-ClassicTDM"
   },
   "license": "ISC",
-  "author": "MagneticNeedle <https://github.com/MagneticNeedle/>",
+  "author": "BF Portal Hub Community",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
