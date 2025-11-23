@@ -1,0 +1,991 @@
+{
+    "Portal_Dynamic": [
+        {
+            "name": "TEAM_1_HQ",
+            "AltTeam": "TeamNeutral",
+            "ObjId": 1,
+            "InfantrySpawns": [
+                "TEAM_1_HQ/SpawnPoint_1_1",
+                "TEAM_1_HQ/SpawnPoint_1_2",
+                "TEAM_1_HQ/SpawnPoint_1_3",
+                "TEAM_1_HQ/SpawnPoint_1_4"
+            ],
+            "HQArea": "TEAM_1_HQ/HQ_Team1",
+            "type": "HQ_PlayerSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -425.202,
+                "y": 139.816,
+                "z": 128.736
+            },
+            "id": "TEAM_1_HQ",
+            "linked": [
+                "HQArea",
+                "InfantrySpawns"
+            ]
+        },
+        {
+            "name": "HQ_Team1",
+            "type": "PolygonVolume",
+            "id": "TEAM_1_HQ/HQ_Team1",
+            "height": 0,
+            "points": [
+                {
+                    "x": -420.202,
+                    "y": 144.816,
+                    "z": 133.736
+                },
+                {
+                    "x": -420.202,
+                    "y": 144.816,
+                    "z": 123.736
+                },
+                {
+                    "x": -430.202,
+                    "y": 144.816,
+                    "z": 123.736
+                },
+                {
+                    "x": -430.202,
+                    "y": 144.816,
+                    "z": 133.736
+                }
+            ]
+        },
+        {
+            "name": "SpawnPoint_1_1",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.999884,
+                "y": 0,
+                "z": 0.0152535
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.0152535,
+                "y": 0,
+                "z": 0.999884
+            },
+            "position": {
+                "x": -425.202,
+                "y": 139.816,
+                "z": 125.736
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_1"
+        },
+        {
+            "name": "SpawnPoint_1_2",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.9995,
+                "y": 0,
+                "z": 0.0316198
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.0316198,
+                "y": 0,
+                "z": -0.9995
+            },
+            "position": {
+                "x": -422.202,
+                "y": 139.816,
+                "z": 128.736
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_2"
+        },
+        {
+            "name": "SpawnPoint_1_3",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.0428871,
+                "y": 0,
+                "z": -0.99908
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.99908,
+                "y": 0,
+                "z": -0.0428871
+            },
+            "position": {
+                "x": -428.202,
+                "y": 139.816,
+                "z": 128.736
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_3"
+        },
+        {
+            "name": "SpawnPoint_1_4",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.0841819,
+                "y": 0,
+                "z": 0.99645
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.99645,
+                "y": 0,
+                "z": 0.0841819
+            },
+            "position": {
+                "x": -425.202,
+                "y": 139.816,
+                "z": 131.736
+            },
+            "id": "TEAM_1_HQ/SpawnPoint_1_4"
+        },
+        {
+            "name": "TEAM_2_HQ",
+            "Team": "Team2",
+            "AltTeam": "TeamNeutral",
+            "ObjId": 2,
+            "InfantrySpawns": [
+                "TEAM_2_HQ/SpawnPoint_2_1",
+                "TEAM_2_HQ/SpawnPoint_2_2",
+                "TEAM_2_HQ/SpawnPoint_2_3",
+                "TEAM_2_HQ/SpawnPoint_2_4"
+            ],
+            "HQArea": "TEAM_2_HQ/HQ_Team2",
+            "type": "HQ_PlayerSpawner",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -334.111,
+                "y": 139.951,
+                "z": 107.416
+            },
+            "id": "TEAM_2_HQ",
+            "linked": [
+                "HQArea",
+                "InfantrySpawns"
+            ]
+        },
+        {
+            "name": "HQ_Team2",
+            "type": "PolygonVolume",
+            "id": "TEAM_2_HQ/HQ_Team2",
+            "height": 0,
+            "points": [
+                {
+                    "x": -329.111,
+                    "y": 144.951,
+                    "z": 112.416
+                },
+                {
+                    "x": -329.111,
+                    "y": 144.951,
+                    "z": 102.416
+                },
+                {
+                    "x": -339.111,
+                    "y": 144.951,
+                    "z": 102.416
+                },
+                {
+                    "x": -339.111,
+                    "y": 144.951,
+                    "z": 112.416
+                }
+            ]
+        },
+        {
+            "name": "SpawnPoint_2_1",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.87795,
+                "y": 0,
+                "z": 0.478754
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.478754,
+                "y": 0,
+                "z": 0.87795
+            },
+            "position": {
+                "x": -334.111,
+                "y": 139.951,
+                "z": 104.416
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_1"
+        },
+        {
+            "name": "SpawnPoint_2_2",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.997604,
+                "y": 0,
+                "z": -0.0691822
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.0691822,
+                "y": 0,
+                "z": -0.997604
+            },
+            "position": {
+                "x": -331.111,
+                "y": 139.951,
+                "z": 107.416
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_2"
+        },
+        {
+            "name": "SpawnPoint_2_3",
+            "type": "SpawnPoint",
+            "right": {
+                "x": 0.162758,
+                "y": 0,
+                "z": -0.986666
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0.986666,
+                "y": 0,
+                "z": 0.162758
+            },
+            "position": {
+                "x": -337.111,
+                "y": 139.951,
+                "z": 107.416
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_3"
+        },
+        {
+            "name": "SpawnPoint_2_4",
+            "type": "SpawnPoint",
+            "right": {
+                "x": -0.165771,
+                "y": 0,
+                "z": 0.986164
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": -0.986164,
+                "y": 0,
+                "z": -0.165771
+            },
+            "position": {
+                "x": -334.111,
+                "y": 139.951,
+                "z": 110.416
+            },
+            "id": "TEAM_2_HQ/SpawnPoint_2_4"
+        },
+        {
+            "name": "CombatArea",
+            "CombatVolume": "CombatArea/CombatVolume",
+            "type": "CombatArea",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -193.415,
+                "y": 136.643,
+                "z": 352.408
+            },
+            "id": "CombatArea",
+            "linked": [
+                "CombatVolume"
+            ]
+        },
+        {
+            "name": "CombatVolume",
+            "type": "PolygonVolume",
+            "id": "CombatArea/CombatVolume",
+            "height": 100,
+            "points": [
+                {
+                    "x": -380.561782,
+                    "y": 131.79278,
+                    "z": 169.3158
+                },
+                {
+                    "x": -367.4552,
+                    "y": 131.79278,
+                    "z": 158.5319
+                },
+                {
+                    "x": -351.4015,
+                    "y": 131.79278,
+                    "z": 148.4637
+                },
+                {
+                    "x": -343.7307,
+                    "y": 131.79278,
+                    "z": 140.6125
+                },
+                {
+                    "x": -314.7649,
+                    "y": 131.79278,
+                    "z": 111.433948
+                },
+                {
+                    "x": -337.8013,
+                    "y": 131.79278,
+                    "z": 88.3601
+                },
+                {
+                    "x": -372.77367,
+                    "y": 131.79278,
+                    "z": 53.3429
+                },
+                {
+                    "x": -392.199,
+                    "y": 131.79278,
+                    "z": 59.65
+                },
+                {
+                    "x": -397.7431,
+                    "y": 131.79278,
+                    "z": 70.4803
+                },
+                {
+                    "x": -421.5494,
+                    "y": 131.79278,
+                    "z": 92.47
+                },
+                {
+                    "x": -439.3783,
+                    "y": 131.79278,
+                    "z": 133.4851
+                },
+                {
+                    "x": -426.4559,
+                    "y": 131.79278,
+                    "z": 144.3866
+                },
+                {
+                    "x": -410.6533,
+                    "y": 131.79278,
+                    "z": 180.7608
+                },
+                {
+                    "x": -395.7476,
+                    "y": 131.79278,
+                    "z": 189.6131
+                }
+            ]
+        },
+        {
+            "name": "DeployCam",
+            "type": "DeployCam",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 0.101056,
+                "z": -0.994881
+            },
+            "front": {
+                "x": 0,
+                "y": 0.994881,
+                "z": 0.101056
+            },
+            "position": {
+                "x": -378.949,
+                "y": 501.636,
+                "z": 102.653
+            },
+            "id": "Camera3D/DeployCam"
+        },
+        {
+            "name": "Basketball_01",
+            "ObjId": 9001,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -348.097,
+                "y": 150.854,
+                "z": 94.6743
+            },
+            "id": "Basketball_01"
+        },
+        {
+            "name": "Basketball_02",
+            "ObjId": 9002,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -367.153,
+                "y": 145.276,
+                "z": 94.0984
+            },
+            "id": "Basketball_02"
+        },
+        {
+            "name": "Basketball_03",
+            "ObjId": 9003,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -354.627,
+                "y": 145.302,
+                "z": 97.5286
+            },
+            "id": "Basketball_03"
+        },
+        {
+            "name": "Basketball_04",
+            "ObjId": 9004,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -352.558,
+                "y": 145.338,
+                "z": 88.0635
+            },
+            "id": "Basketball_04"
+        },
+        {
+            "name": "Basketball_05",
+            "ObjId": 9005,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -352.558,
+                "y": 145.338,
+                "z": 84.0313
+            },
+            "id": "Basketball_05"
+        },
+        {
+            "name": "Basketball_06",
+            "ObjId": 9006,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -363.504,
+                "y": 145.338,
+                "z": 84.0313
+            },
+            "id": "Basketball_06"
+        },
+        {
+            "name": "Basketball_07",
+            "ObjId": 9007,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -373.761,
+                "y": 145.334,
+                "z": 107.083
+            },
+            "id": "Basketball_07"
+        },
+        {
+            "name": "Basketball_08",
+            "ObjId": 9008,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -387.013,
+                "y": 145.334,
+                "z": 107.083
+            },
+            "id": "Basketball_08"
+        },
+        {
+            "name": "Basketball_09",
+            "ObjId": 9009,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -387.013,
+                "y": 145.334,
+                "z": 130.344
+            },
+            "id": "Basketball_09"
+        },
+        {
+            "name": "Basketball_10",
+            "ObjId": 9010,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -387.013,
+                "y": 145.334,
+                "z": 120.24
+            },
+            "id": "Basketball_10"
+        },
+        {
+            "name": "Basketball_11",
+            "ObjId": 9011,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -412.116,
+                "y": 145.334,
+                "z": 120.24
+            },
+            "id": "Basketball_11"
+        },
+        {
+            "name": "Basketball_12",
+            "ObjId": 9012,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -381.928,
+                "y": 141.809,
+                "z": 188.899
+            },
+            "id": "Basketball_12"
+        },
+        {
+            "name": "Basketball_13",
+            "ObjId": 9013,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -376.992,
+                "y": 145.334,
+                "z": 149.177
+            },
+            "id": "Basketball_13"
+        },
+        {
+            "name": "Basketball_14",
+            "ObjId": 9014,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -386.421,
+                "y": 145.334,
+                "z": 142.076
+            },
+            "id": "Basketball_14"
+        },
+        {
+            "name": "Basketball_15",
+            "ObjId": 9015,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -370.036,
+                "y": 145.334,
+                "z": 137.333
+            },
+            "id": "Basketball_15"
+        },
+        {
+            "name": "Basketball_16",
+            "ObjId": 9016,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -383.181,
+                "y": 145.334,
+                "z": 130.258
+            },
+            "id": "Basketball_16"
+        },
+        {
+            "name": "Basketball_17",
+            "ObjId": 9017,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -428.211,
+                "y": 139.891,
+                "z": 130.258
+            },
+            "id": "Basketball_17"
+        },
+        {
+            "name": "Basketball_18",
+            "ObjId": 9018,
+            "type": "Basketball_01",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": -332.772,
+                "y": 139.891,
+                "z": 105.295
+            },
+            "id": "Basketball_18"
+        }
+    ],
+    "Static": [
+        {
+            "name": "MP_Granite_TechCampus_Portal_Terrain",
+            "metadata/_edit_lock_": true,
+            "type": "MP_Granite_TechCampus_Portal_Terrain",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "id": "Static/MP_Granite_TechCampus_Portal_Terrain"
+        },
+        {
+            "name": "MP_Granite_TechCampus_Portal_Assets",
+            "metadata/_edit_lock_": true,
+            "type": "MP_Granite_TechCampus_Portal_Assets",
+            "right": {
+                "x": 1,
+                "y": 0,
+                "z": 0
+            },
+            "up": {
+                "x": 0,
+                "y": 1,
+                "z": 0
+            },
+            "front": {
+                "x": 0,
+                "y": 0,
+                "z": 1
+            },
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "id": "Static/MP_Granite_TechCampus_Portal_Assets"
+        }
+    ]
+}
