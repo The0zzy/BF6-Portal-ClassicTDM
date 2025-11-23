@@ -102,7 +102,7 @@ function playSFX(sfxId: mod.RuntimeSpawn_Common) {
     mod.CreateVector(0, 0, 0),
     mod.CreateVector(0, 0, 0)
   );
-  mod.PlaySound(sfx, 100);
+  mod.PlaySound(sfx, 1);
 }
 
 function playVO(vo: mod.VoiceOverEvents2D, team?: any) {
