@@ -13,5 +13,6 @@
   "UISCORE_TEAM2_NAME": "PAX",
   "UISCORE_TIMER_BEGINNING": "{}",
   "UISCORE_TIMER_BEGINNING_MS": "{}:{}",
-  "UISCORE_FIRSTTO": "{} to win"
+  "UISCORE_FIRSTTO": "{} to win",
+  "NOTIFICATION_TEAM_SWITCH": "You have switched teams!"
 }

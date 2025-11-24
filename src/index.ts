@@ -24,6 +24,7 @@ interface PlayerStats {
   longestKillstreak: number;
   currentKillstreak: number;
   teamSwitchInteractPoint: mod.InteractPoint | any;
+  lastDeployTime: number
 }
 
 //#endregion
@@ -606,14 +607,15 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
     longestKillstreak: 0,
     currentKillstreak: 0,
     teamSwitchInteractPoint: null,
+    lastDeployTime: 0
   };
   updateScoreboard(eventPlayer, playersStats[playerId]);
 }
 
-export function OnPlayerDeployed(eventPlayer: mod.Player) {
+export async function OnPlayerDeployed(eventPlayer: mod.Player) {
   if (gameStarted) {
     mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer), 0);
-    spawnTeamSwitchInteractPoint(eventPlayer);
+    await spawnTeamSwitchInteractPoint(eventPlayer);
   }
 
   if (GAMEMODE_CONFIG.maxStartingAmmo) {
@@ -698,15 +700,7 @@ export function OngoingPlayer(eventPlayer: mod.Player) {
     } else {
       mod.EnableAllInputRestrictions(eventPlayer, false);
     }
-    if(gameStarted && GAMEMODE_CONFIG.enableTeamSwitchInteractPoint) {
-      if(playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint) {
-        if(mod.NotEqualTo(mod.GetSoldierState(eventPlayer, mod.SoldierStateVector.GetLinearVelocity), mod.CreateVector(0,0,0))) {
-          mod.EnableInteractPoint(playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint, false);
-          mod.UnspawnObject(playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint);
-          playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint = null;
-        }
-      }
-    }
+    checkInteractPointRemoval(eventPlayer);
   }
 }
 
@@ -748,24 +742,95 @@ export function OngoingGlobal() {
 }
 
 //#endregion
-function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
+
+//#region Teamswitch
+
+function vectorToString(vector: mod.Vector): string {
+  return "(" + mod.XComponentOf(vector) + " | " + mod.YComponentOf(vector) + " | " + mod.ZComponentOf(vector) + ")"
+}
+
+async function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
   if (gameStarted) {
-    let interactPointId = mod.SpawnObject(
-      mod.RuntimeSpawn_Common.InteractPoint, 
-      mod.Add(
-        mod.GetSoldierState(
-          eventPlayer, 
-          mod.SoldierStateVector.EyePosition
-        ), 
-        mod.GetSoldierState(
-          eventPlayer, 
-          mod.SoldierStateVector.GetFacingDirection
-        )
-      ),
-      mod.CreateVector(0, 0, 0)
-    );
-    let interactPoint = mod.GetInteractPoint(interactPointId);
-    mod.EnableInteractPoint(interactPoint, true);
-    playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint = interactPoint;
+    let playerId = mod.GetObjId(eventPlayer);
+    playersStats[playerId].lastDeployTime = mod.GetMatchTimeElapsed();
+    if (playersStats[playerId].teamSwitchInteractPoint === null) {
+      console.log("Spawning team switch interact point for player ID:", playerId);
+      let interactPointPosition = mod.CreateVector(0, 0, 0);
+      let isOnGround = mod.GetSoldierState(
+        eventPlayer,
+        mod.SoldierStateBool.IsOnGround
+      );
+      while (!isOnGround) {
+        console.log("wait for player to be on the ground...");
+        await mod.Wait(0.2)
+        isOnGround = mod.GetSoldierState(
+          eventPlayer,
+          mod.SoldierStateBool.IsOnGround
+        );
+      }
+      let playerPosition = mod.GetSoldierState(
+        eventPlayer,
+        mod.SoldierStateVector.GetPosition
+      );
+      let playerFacingDirection = mod.GetSoldierState(
+        eventPlayer,
+        mod.SoldierStateVector.GetFacingDirection
+      );
+      interactPointPosition = mod.Add(mod.Add(playerPosition, playerFacingDirection), mod.CreateVector(0, 1.5, 0));
+      let interactPoint: mod.InteractPoint = mod.SpawnObject(
+        mod.RuntimeSpawn_Common.InteractPoint,
+        interactPointPosition,
+        mod.CreateVector(0, 0, 0)
+      );
+      mod.EnableInteractPoint(interactPoint, true);
+      playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint = interactPoint;
+    }
   }
 }
+
+export function OnPlayerInteract(eventPlayer: mod.Player, eventInteractPoint: mod.InteractPoint) {
+  teamSwitchInteractPointActivated(eventPlayer, eventInteractPoint);
+}
+
+function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteractPoint: mod.InteractPoint) {
+  let playerId = mod.GetObjId(eventPlayer);
+  if (playersStats[playerId].teamSwitchInteractPoint != null) {
+    let interactPointId = mod.GetObjId(playersStats[playerId].teamSwitchInteractPoint)
+    let eventInteractPointId = mod.GetObjId(eventInteractPoint);
+    if (interactPointId == eventInteractPointId) {
+      mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAM_SWITCH), eventPlayer);
+      mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
+      mod.UndeployPlayer(eventPlayer);
+      removeTeamSwitchInteractPoint(eventPlayer);
+    }
+  }
+}
+
+function removeTeamSwitchInteractPoint(eventPlayer: mod.Player) {
+  let playerId = mod.GetObjId(eventPlayer);
+  mod.EnableInteractPoint(playersStats[playerId].teamSwitchInteractPoint, false);
+  mod.UnspawnObject(playersStats[playerId].teamSwitchInteractPoint);
+  playersStats[playerId].teamSwitchInteractPoint = null;
+}
+
+function isVelocityBeyond(threshold: number, eventPlayer: mod.Player): boolean {
+  let playerVelocity = mod.GetSoldierState(eventPlayer, mod.SoldierStateVector.GetLinearVelocity);
+  let x = mod.AbsoluteValue(mod.XComponentOf(playerVelocity));
+  let y = mod.AbsoluteValue(mod.YComponentOf(playerVelocity));
+  let z = mod.AbsoluteValue(mod.ZComponentOf(playerVelocity));
+  let playerVelocityNumber = x + y + z;
+  return playerVelocityNumber > threshold ? true : false;
+}
+
+function checkInteractPointRemoval(eventPlayer: mod.Player) {
+  if (gameStarted && GAMEMODE_CONFIG.enableTeamSwitchInteractPoint) {
+    let playerId = mod.GetObjId(eventPlayer);
+    if (playersStats[playerId].teamSwitchInteractPoint != null) {
+      // remove interact point if player is moving or did not interact for 3 seconds
+      if (isVelocityBeyond(3, eventPlayer) || ((mod.GetMatchTimeElapsed() - playersStats[playerId].lastDeployTime) > 3)) {
+        removeTeamSwitchInteractPoint(eventPlayer);
+      }
+    }
+  }
+}
+//#endregion
