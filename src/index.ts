@@ -13,6 +13,7 @@ interface GameModeConfig {
   hqRoundStartTeam2: number;
   maxStartingAmmo: boolean;
   startSpawnPointID: number;
+  enableTeamSwitchInteractPoint: boolean;
 }
 
 interface PlayerStats {
@@ -20,6 +21,9 @@ interface PlayerStats {
   d: number;
   a: number;
   hs: number;
+  longestKillstreak: number;
+  currentKillstreak: number;
+  teamSwitchInteractPoint: mod.InteractPoint | any;
 }
 
 //#endregion
@@ -41,6 +45,7 @@ const GAMEMODE_CONFIG: GameModeConfig = {
   hqRoundStartTeam2: 2,
   maxStartingAmmo: true,
   startSpawnPointID: 9001, // Starting ID for spawn point SpatialObjects. Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
+  enableTeamSwitchInteractPoint: true, // Enable interact point that allows players to switch teams mid-game
 };
 
 //#endregion
@@ -598,6 +603,9 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
     d: 0,
     a: 0,
     hs: 0,
+    longestKillstreak: 0,
+    currentKillstreak: 0,
+    teamSwitchInteractPoint: null,
   };
   updateScoreboard(eventPlayer, playersStats[playerId]);
 }
@@ -605,6 +613,7 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
 export function OnPlayerDeployed(eventPlayer: mod.Player) {
   if (gameStarted) {
     mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer), 0);
+    spawnTeamSwitchInteractPoint(eventPlayer);
   }
 
   if (GAMEMODE_CONFIG.maxStartingAmmo) {
@@ -689,6 +698,15 @@ export function OngoingPlayer(eventPlayer: mod.Player) {
     } else {
       mod.EnableAllInputRestrictions(eventPlayer, false);
     }
+    if(gameStarted && GAMEMODE_CONFIG.enableTeamSwitchInteractPoint) {
+      if(playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint) {
+        if(mod.NotEqualTo(mod.GetSoldierState(eventPlayer, mod.SoldierStateVector.GetLinearVelocity), mod.CreateVector(0,0,0))) {
+          mod.EnableInteractPoint(playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint, false);
+          mod.UnspawnObject(playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint);
+          playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint = null;
+        }
+      }
+    }
   }
 }
 
@@ -730,3 +748,24 @@ export function OngoingGlobal() {
 }
 
 //#endregion
+function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
+  if (gameStarted) {
+    let interactPointId = mod.SpawnObject(
+      mod.RuntimeSpawn_Common.InteractPoint, 
+      mod.Add(
+        mod.GetSoldierState(
+          eventPlayer, 
+          mod.SoldierStateVector.EyePosition
+        ), 
+        mod.GetSoldierState(
+          eventPlayer, 
+          mod.SoldierStateVector.GetFacingDirection
+        )
+      ),
+      mod.CreateVector(0, 0, 0)
+    );
+    let interactPoint = mod.GetInteractPoint(interactPointId);
+    mod.EnableInteractPoint(interactPoint, true);
+    playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint = interactPoint;
+  }
+}
