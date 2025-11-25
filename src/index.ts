@@ -13,7 +13,6 @@ interface GameModeConfig {
   hqRoundStartTeam2: number;
   maxStartingAmmo: boolean;
   startSpawnPointID: number;
-  enableTeamSwitchInteractPoint: boolean;
 }
 
 interface PlayerStats {
@@ -23,8 +22,19 @@ interface PlayerStats {
   hs: number;
   longestKillstreak: number;
   currentKillstreak: number;
-  teamSwitchInteractPoint: mod.InteractPoint | any;
-  lastDeployTime: number
+}
+
+interface TeamSwitchConfig {
+  enableTeamSwitch: boolean;
+  interactPointMinLifetime: number;
+  interactPointMaxLifetime: number;
+  velocityThreshold: number;
+}
+
+interface TeamSwitchSettings {
+  interactPoint: mod.InteractPoint | null;
+  lastDeployTime: number;
+  dontShowAgain: boolean;
 }
 
 //#endregion
@@ -46,8 +56,16 @@ const GAMEMODE_CONFIG: GameModeConfig = {
   hqRoundStartTeam2: 2,
   maxStartingAmmo: true,
   startSpawnPointID: 9001, // Starting ID for spawn point SpatialObjects. Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
-  enableTeamSwitchInteractPoint: true, // Enable interact point that allows players to switch teams mid-game
 };
+
+const TEAMSWITCHCONFIG: TeamSwitchConfig = {
+  enableTeamSwitch: true,
+  interactPointMinLifetime: 1,
+  interactPointMaxLifetime: 3,
+  velocityThreshold: 3
+}
+
+const teamSwitchSettings: { [id: number]: TeamSwitchSettings } = {};
 
 //#endregion
 
@@ -605,8 +623,11 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
     a: 0,
     hs: 0,
     longestKillstreak: 0,
-    currentKillstreak: 0,
-    teamSwitchInteractPoint: null,
+    currentKillstreak: 0
+  };
+  teamSwitchSettings[playerId] = {
+    dontShowAgain: false,
+    interactPoint: null,
     lastDeployTime: 0
   };
   updateScoreboard(eventPlayer, playersStats[playerId]);
@@ -745,23 +766,18 @@ export function OngoingGlobal() {
 
 //#region Teamswitch
 
-function vectorToString(vector: mod.Vector): string {
-  return "(" + mod.XComponentOf(vector) + " | " + mod.YComponentOf(vector) + " | " + mod.ZComponentOf(vector) + ")"
-}
-
 async function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
   if (gameStarted) {
     let playerId = mod.GetObjId(eventPlayer);
-    playersStats[playerId].lastDeployTime = mod.GetMatchTimeElapsed();
-    if (playersStats[playerId].teamSwitchInteractPoint === null) {
-      console.log("Spawning team switch interact point for player ID:", playerId);
+    if (teamSwitchSettings[playerId].interactPoint === null) {
       let interactPointPosition = mod.CreateVector(0, 0, 0);
       let isOnGround = mod.GetSoldierState(
         eventPlayer,
         mod.SoldierStateBool.IsOnGround
       );
       while (!isOnGround) {
-        console.log("wait for player to be on the ground...");
+        // wait for player to be on the ground as otherwise they would have a velocity
+        // additionally there seems to be an issue that the EyePosition is (0,0,0) if not waiting
         await mod.Wait(0.2)
         isOnGround = mod.GetSoldierState(
           eventPlayer,
@@ -783,7 +799,8 @@ async function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
         mod.CreateVector(0, 0, 0)
       );
       mod.EnableInteractPoint(interactPoint, true);
-      playersStats[mod.GetObjId(eventPlayer)].teamSwitchInteractPoint = interactPoint;
+      teamSwitchSettings[playerId].interactPoint = interactPoint;
+      teamSwitchSettings[playerId].lastDeployTime = mod.GetMatchTimeElapsed();
     }
   }
 }
@@ -794,8 +811,8 @@ export function OnPlayerInteract(eventPlayer: mod.Player, eventInteractPoint: mo
 
 function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteractPoint: mod.InteractPoint) {
   let playerId = mod.GetObjId(eventPlayer);
-  if (playersStats[playerId].teamSwitchInteractPoint != null) {
-    let interactPointId = mod.GetObjId(playersStats[playerId].teamSwitchInteractPoint)
+  if (teamSwitchSettings[playerId].interactPoint != null) {
+    let interactPointId = mod.GetObjId(teamSwitchSettings[playerId].interactPoint)
     let eventInteractPointId = mod.GetObjId(eventInteractPoint);
     if (interactPointId == eventInteractPointId) {
       mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAM_SWITCH), eventPlayer);
@@ -808,9 +825,11 @@ function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteract
 
 function removeTeamSwitchInteractPoint(eventPlayer: mod.Player) {
   let playerId = mod.GetObjId(eventPlayer);
-  mod.EnableInteractPoint(playersStats[playerId].teamSwitchInteractPoint, false);
-  mod.UnspawnObject(playersStats[playerId].teamSwitchInteractPoint);
-  playersStats[playerId].teamSwitchInteractPoint = null;
+  if (teamSwitchSettings[playerId].interactPoint != null) {
+    mod.EnableInteractPoint(teamSwitchSettings[playerId].interactPoint, false);
+    mod.UnspawnObject(teamSwitchSettings[playerId].interactPoint);
+    teamSwitchSettings[playerId].interactPoint = null;
+  }
 }
 
 function isVelocityBeyond(threshold: number, eventPlayer: mod.Player): boolean {
@@ -823,11 +842,11 @@ function isVelocityBeyond(threshold: number, eventPlayer: mod.Player): boolean {
 }
 
 function checkInteractPointRemoval(eventPlayer: mod.Player) {
-  if (gameStarted && GAMEMODE_CONFIG.enableTeamSwitchInteractPoint) {
+  if (gameStarted && TEAMSWITCHCONFIG.enableTeamSwitch) {
     let playerId = mod.GetObjId(eventPlayer);
-    if (playersStats[playerId].teamSwitchInteractPoint != null) {
+    if (teamSwitchSettings[playerId].interactPoint != null) {
       // remove interact point if player is moving or did not interact for 3 seconds
-      if (isVelocityBeyond(3, eventPlayer) || ((mod.GetMatchTimeElapsed() - playersStats[playerId].lastDeployTime) > 3)) {
+      if (isVelocityBeyond(3, eventPlayer) || ((mod.GetMatchTimeElapsed() - teamSwitchSettings[playerId].lastDeployTime) > 3)) {
         removeTeamSwitchInteractPoint(eventPlayer);
       }
     }
