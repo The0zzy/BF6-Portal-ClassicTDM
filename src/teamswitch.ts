@@ -90,6 +90,8 @@ function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteract
     let interactPointId = mod.GetObjId(teamSwitchData[playerId].interactPoint)
     let eventInteractPointId = mod.GetObjId(eventInteractPoint);
     if (interactPointId == eventInteractPointId) {
+      mod.EnableUIInputMode(true, eventPlayer);
+      createTeamSwitchUI(eventPlayer);
       // Switch to opposite team
       mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAM_SWITCH), eventPlayer);
       mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
@@ -150,7 +152,7 @@ function initTeamSwitchData(eventPlayer: mod.Player) {
 
 //#endregion
 
-//#region TEAM SWITCH UI
+//#region Team Switch UI
 
 
 function createTeamSwitchUI(eventPlayer: mod.Player) {
@@ -160,9 +162,9 @@ function createTeamSwitchUI(eventPlayer: mod.Player) {
   const UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_" + playerId;
   const UI_TEAMSWITCH_BUTTON_TEAM2_ID = "UI_TEAMSWITCH_BUTTON_TEAM2_" + playerId;
 
-  mod.AddUIContainer(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(1300, 700, 0), mod.UIAnchor.Center, mod.GetUIRoot(), true, 10, mod.CreateVector(0, 0, 0), 1, mod.UIBgFill.Blur);
+  mod.AddUIContainer(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(1300, 700, 0), mod.UIAnchor.Center, mod.GetUIRoot(), true, 10, mod.CreateVector(0, 0, 0), 1, mod.UIBgFill.Blur, eventPlayer);
   const UI_TEAMSWITCH_CONTAINER_BASE = mod.FindUIWidgetWithName(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.GetUIRoot());
-  mod.AddUIButton(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(300, 100, 0), mod.UIAnchor.CenterLeft, eventPlayer);
+  mod.AddUIButton(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(300, 100, 0), mod.UIAnchor.CenterLeft);
   const UI_TEAMSWITCH_BUTTON_TEAM1 = mod.FindUIWidgetWithName(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.GetUIRoot());
   mod.SetUIWidgetParent(UI_TEAMSWITCH_BUTTON_TEAM1, UI_TEAMSWITCH_CONTAINER_BASE);
   mod.AddUIText(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(250, 50, 0), mod.UIAnchor.CenterLeft, mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_TEAM1_LABEL));
