@@ -713,6 +713,7 @@ export function OnPlayerUndeploy(eventPlayer: mod.Player) {
   const eventPlayerId = mod.GetObjId(eventPlayer);
   playersStats[eventPlayerId].d++;
   updateScoreboard(eventPlayer, playersStats[eventPlayerId]);
+  removeTeamSwitchInteractPoint(eventPlayerId);
 }
 
 //#endregion
