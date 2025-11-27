@@ -26,8 +26,6 @@ const TEAMSWITCHCONFIG: TeamSwitchConfig = {
 
 const teamSwitchData: { [id: number]: teamSwitchData } = {};
 
-let gameStarted = false;
-
 //#endregion
 
 //#region Team Switch Logic
@@ -37,51 +35,49 @@ let gameStarted = false;
  * The interact point allows players to switch teams
  */
 async function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
-  if (gameStarted) {
-    let playerId = mod.GetObjId(eventPlayer);
-    if (teamSwitchData[playerId].interactPoint === null) {
-      let interactPointPosition = mod.CreateVector(0, 0, 0);
-      let isOnGround = mod.GetSoldierState(
+  let playerId = mod.GetObjId(eventPlayer);
+  if (teamSwitchData[playerId].interactPoint === null) {
+    let interactPointPosition = mod.CreateVector(0, 0, 0);
+    let isOnGround = mod.GetSoldierState(
+      eventPlayer,
+      mod.SoldierStateBool.IsOnGround
+    );
+
+    // Wait for player to be on the ground to avoid velocity issues
+    while (!isOnGround) {
+      await mod.Wait(0.2)
+      isOnGround = mod.GetSoldierState(
         eventPlayer,
         mod.SoldierStateBool.IsOnGround
       );
-      
-      // Wait for player to be on the ground to avoid velocity issues
-      while (!isOnGround) {
-        await mod.Wait(0.2)
-        isOnGround = mod.GetSoldierState(
-          eventPlayer,
-          mod.SoldierStateBool.IsOnGround
-        );
-      }
-      
-      let playerPosition = mod.GetSoldierState(
-        eventPlayer,
-        mod.SoldierStateVector.GetPosition
-      );
-      let playerFacingDirection = mod.GetSoldierState(
-        eventPlayer,
-        mod.SoldierStateVector.GetFacingDirection
-      );
-      
-      // Position the interact point in front of the player
-      interactPointPosition = mod.Add(
-        mod.Add(
-          playerPosition, 
-          playerFacingDirection
-        ), 
-        mod.CreateVector(0, 1.5, 0)
-      );
-      
-      let interactPoint: mod.InteractPoint = mod.SpawnObject(
-        mod.RuntimeSpawn_Common.InteractPoint,
-        interactPointPosition,
-        mod.CreateVector(0, 0, 0)
-      );
-      mod.EnableInteractPoint(interactPoint, true);
-      teamSwitchData[playerId].interactPoint = interactPoint;
-      teamSwitchData[playerId].lastDeployTime = mod.GetMatchTimeElapsed();
     }
+
+    let playerPosition = mod.GetSoldierState(
+      eventPlayer,
+      mod.SoldierStateVector.GetPosition
+    );
+    let playerFacingDirection = mod.GetSoldierState(
+      eventPlayer,
+      mod.SoldierStateVector.GetFacingDirection
+    );
+
+    // Position the interact point in front of the player
+    interactPointPosition = mod.Add(
+      mod.Add(
+        playerPosition,
+        playerFacingDirection
+      ),
+      mod.CreateVector(0, 1.5, 0)
+    );
+
+    let interactPoint: mod.InteractPoint = mod.SpawnObject(
+      mod.RuntimeSpawn_Common.InteractPoint,
+      interactPointPosition,
+      mod.CreateVector(0, 0, 0)
+    );
+    mod.EnableInteractPoint(interactPoint, true);
+    teamSwitchData[playerId].interactPoint = interactPoint;
+    teamSwitchData[playerId].lastDeployTime = mod.GetMatchTimeElapsed();
   }
 }
 
@@ -93,7 +89,6 @@ function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteract
   if (teamSwitchData[playerId].interactPoint != null) {
     let interactPointId = mod.GetObjId(teamSwitchData[playerId].interactPoint)
     let eventInteractPointId = mod.GetObjId(eventInteractPoint);
-    
     if (interactPointId == eventInteractPointId) {
       // Switch to opposite team
       mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAM_SWITCH), eventPlayer);
@@ -130,27 +125,49 @@ function isVelocityBeyond(threshold: number, eventPlayer: mod.Player): boolean {
 /**
  * Checks and removes the interact point if the player is moving or hasn't interacted for too long
  */
-function checkInteractPointRemoval(eventPlayer: mod.Player) {
-  if (TEAMSWITCHCONFIG.enableTeamSwitch && !mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsDead)){
+function checkTeamSwitchInteractPointRemoval(eventPlayer: mod.Player) {
+  if (TEAMSWITCHCONFIG.enableTeamSwitch && !mod.GetSoldierState(eventPlayer, mod.SoldierStateBool.IsDead)) {
     let playerId = mod.GetObjId(eventPlayer);
     if (teamSwitchData[playerId].interactPoint != null) {
       // Remove interact point if player is moving or did not interact within threshold
       let interactPointLifetime = (mod.GetMatchTimeElapsed() - teamSwitchData[playerId].lastDeployTime)
-      if (isVelocityBeyond(TEAMSWITCHCONFIG.velocityThreshold, eventPlayer) || 
-          (interactPointLifetime > TEAMSWITCHCONFIG.interactPointMaxLifetime)) {
+      if (isVelocityBeyond(TEAMSWITCHCONFIG.velocityThreshold, eventPlayer) ||
+        (interactPointLifetime > TEAMSWITCHCONFIG.interactPointMaxLifetime)) {
         removeTeamSwitchInteractPoint(playerId);
       }
     }
   }
 }
 
-function initTeamSwitchData(eventPlayer: mod.Player){
+function initTeamSwitchData(eventPlayer: mod.Player) {
   const playerId = mod.GetObjId(eventPlayer);
   teamSwitchData[playerId] = {
     dontShowAgain: false,
     interactPoint: null,
     lastDeployTime: 0
   };
+}
+
+//#endregion
+
+//#region TEAM SWITCH UI
+
+
+function createTeamSwitchUI(eventPlayer: mod.Player) {
+  let playerId = mod.GetObjId(eventPlayer);
+  const UI_TEAMSWITCH_CONTAINER_BASE_ID = "UI_TEAMSWITCH_CONTAINER_BASE_" + playerId;
+  const UI_TEAMSWITCH_BUTTON_TEAM1_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_" + playerId;
+  const UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_" + playerId;
+  const UI_TEAMSWITCH_BUTTON_TEAM2_ID = "UI_TEAMSWITCH_BUTTON_TEAM2_" + playerId;
+
+  mod.AddUIContainer(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(1300, 700, 0), mod.UIAnchor.Center, mod.GetUIRoot(), true, 10, mod.CreateVector(0, 0, 0), 1, mod.UIBgFill.Blur);
+  const UI_TEAMSWITCH_CONTAINER_BASE = mod.FindUIWidgetWithName(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.GetUIRoot());
+  mod.AddUIButton(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(300, 100, 0), mod.UIAnchor.CenterLeft, eventPlayer);
+  const UI_TEAMSWITCH_BUTTON_TEAM1 = mod.FindUIWidgetWithName(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(UI_TEAMSWITCH_BUTTON_TEAM1, UI_TEAMSWITCH_CONTAINER_BASE);
+  mod.AddUIText(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(250, 50, 0), mod.UIAnchor.CenterLeft, mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_TEAM1_LABEL));
+  const UI_TEAMSWITCH_BUTTON_TEAM1_LABEL = mod.FindUIWidgetWithName(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL, UI_TEAMSWITCH_BUTTON_TEAM1);
 }
 
 //#endregion
@@ -190,7 +207,7 @@ export function OnPlayerUndeploy(eventPlayer: mod.Player) {
  * Ongoing check for interact point removal based on player movement
  */
 export function OngoingPlayer(eventPlayer: mod.Player) {
-  checkInteractPointRemoval(eventPlayer);
+  checkTeamSwitchInteractPointRemoval(eventPlayer);
 }
 
 /**
