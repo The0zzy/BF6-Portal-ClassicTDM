@@ -798,7 +798,13 @@ async function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
         eventPlayer,
         mod.SoldierStateVector.GetFacingDirection
       );
-      interactPointPosition = mod.Add(mod.Add(playerPosition, playerFacingDirection), mod.CreateVector(0, 1.5, 0));
+      interactPointPosition = mod.Add(
+        mod.Add(
+          playerPosition, 
+          playerFacingDirection
+        ), 
+        mod.CreateVector(0, 1.5, 0)
+      );
       let interactPoint: mod.InteractPoint = mod.SpawnObject(
         mod.RuntimeSpawn_Common.InteractPoint,
         interactPointPosition,
