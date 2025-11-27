@@ -58,6 +58,10 @@ const GAMEMODE_CONFIG: GameModeConfig = {
   startSpawnPointID: 9001, // Starting ID for spawn point SpatialObjects. Your spawners need to be a SpatialObject (any object that is an actual prop) in incremental IDs starting from startSpawnPointID or they'll not be parsed
 };
 
+//#endregion
+
+//#region Teamswitch config
+
 const TEAMSWITCHCONFIG: TeamSwitchConfig = {
   enableTeamSwitch: true,
   interactPointMinLifetime: 1,
@@ -655,6 +659,7 @@ export async function OnPlayerDeployed(eventPlayer: mod.Player) {
 
 export function OnPlayerLeaveGame(eventNumber: number) {
   delete playersStats[eventNumber];
+  removeTeamSwitchInteractPoint(eventNumber);
 }
 
 export function OnPlayerEarnedKill(
@@ -818,13 +823,12 @@ function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteract
       mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAM_SWITCH), eventPlayer);
       mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
       mod.UndeployPlayer(eventPlayer);
-      removeTeamSwitchInteractPoint(eventPlayer);
+      removeTeamSwitchInteractPoint(playerId);
     }
   }
 }
 
-function removeTeamSwitchInteractPoint(eventPlayer: mod.Player) {
-  let playerId = mod.GetObjId(eventPlayer);
+function removeTeamSwitchInteractPoint(playerId: number) {
   if (teamSwitchSettings[playerId].interactPoint != null) {
     mod.EnableInteractPoint(teamSwitchSettings[playerId].interactPoint, false);
     mod.UnspawnObject(teamSwitchSettings[playerId].interactPoint);
@@ -847,7 +851,7 @@ function checkInteractPointRemoval(eventPlayer: mod.Player) {
     if (teamSwitchSettings[playerId].interactPoint != null) {
       // remove interact point if player is moving or did not interact for 3 seconds
       if (isVelocityBeyond(3, eventPlayer) || ((mod.GetMatchTimeElapsed() - teamSwitchSettings[playerId].lastDeployTime) > 3)) {
-        removeTeamSwitchInteractPoint(eventPlayer);
+        removeTeamSwitchInteractPoint(playerId);
       }
     }
   }
