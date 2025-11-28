@@ -36,7 +36,9 @@ const teamSwitchData: { [id: number]: teamSwitchData } = {};
  */
 async function spawnTeamSwitchInteractPoint(eventPlayer: mod.Player) {
   let playerId = mod.GetObjId(eventPlayer);
-  if (teamSwitchData[playerId].interactPoint === null) {
+  if (teamSwitchData[playerId].interactPoint === null &&
+    !teamSwitchData[playerId].dontShowAgain &&
+    TEAMSWITCHCONFIG.enableTeamSwitch) {
     let interactPointPosition = mod.CreateVector(0, 0, 0);
     let isOnGround = mod.GetSoldierState(
       eventPlayer,
@@ -92,11 +94,6 @@ function teamSwitchInteractPointActivated(eventPlayer: mod.Player, eventInteract
     if (interactPointId == eventInteractPointId) {
       mod.EnableUIInputMode(true, eventPlayer);
       createTeamSwitchUI(eventPlayer);
-      // Switch to opposite team
-      mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAM_SWITCH), eventPlayer);
-      mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
-      mod.UndeployPlayer(eventPlayer);
-      removeTeamSwitchInteractPoint(playerId);
     }
   }
 }
@@ -150,31 +147,209 @@ function initTeamSwitchData(eventPlayer: mod.Player) {
   };
 }
 
+function teamSwitchButtonEvent(
+  eventPlayer: mod.Player,
+  eventUIWidget: mod.UIWidget,
+  eventUIButtonEvent: mod.UIButtonEvent
+) {
+  let playerId = mod.GetObjId(eventPlayer);
+  const widgetName = mod.GetUIWidgetName(eventUIWidget);
+  switch (widgetName) {
+    case UI_TEAMSWITCH_BUTTON_TEAM1_ID + playerId:
+      processTeamSwitch(eventPlayer);
+      break;
+    case UI_TEAMSWITCH_BUTTON_TEAM2_ID + playerId:
+      processTeamSwitch(eventPlayer);
+      break;
+    case UI_TEAMSWITCH_BUTTON_SPECTATE_ID + playerId:
+      // Spectate not implemented
+      break;
+    case UI_TEAMSWITCH_BUTTON_CANCEL_ID + playerId:
+      deleteTeamSwitchUI(eventPlayer);
+      break;
+    case UI_TEAMSWITCH_BUTTON_OPTOUT_ID + playerId:
+      teamSwitchData[playerId].dontShowAgain = true;
+      deleteTeamSwitchUI(eventPlayer);
+      break;
+    default:
+      break;
+  }
+}
+
+function processTeamSwitch(eventPlayer: mod.Player) {
+  mod.SetTeam(eventPlayer, mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)) ? mod.GetTeam(1) : mod.GetTeam(2));
+  mod.UndeployPlayer(eventPlayer);
+  mod.DisplayNotificationMessage(mod.Message(mod.stringkeys.NOTIFICATION_TEAMSWITCH), eventPlayer);
+  deleteTeamSwitchUI(eventPlayer);
+}
+
+function deleteTeamSwitchUI(eventPlayer: mod.Player | number) {
+  let playerId = eventPlayer;
+  if (mod.IsType(eventPlayer, mod.Types.Player)) {
+    mod.EnableUIInputMode(false, eventPlayer as mod.Player);
+    playerId = mod.GetObjId(eventPlayer as mod.Player);
+  }
+  mod.DeleteUIWidget(mod.FindUIWidgetWithName(UI_TEAMSWITCH_CONTAINER_BASE_ID + playerId, mod.GetUIRoot()));
+}
 //#endregion
 
 //#region Team Switch UI
 
+const UI_TEAMSWITCH_CONTAINER_BASE_ID = "UI_TEAMSWITCH_CONTAINER_BASE_";
+const UI_TEAMSWITCH_BUTTON_TEAM1_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_";
+const UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_";
+const UI_TEAMSWITCH_BUTTON_TEAM2_ID = "UI_TEAMSWITCH_BUTTON_TEAM2_";
+const UI_TEAMSWITCH_BUTTON_TEAM2_LABEL_ID = "UI_TEAMSWITCH_BUTTON_TEAM2_LABEL_";
+const UI_TEAMSWITCH_BUTTON_SPECTATE_ID = "UI_TEAMSWITCH_BUTTON_SPECTATE_";
+const UI_TEAMSWITCH_BUTTON_SPECTATE_LABEL_ID = "UI_TEAMSWITCH_BUTTON_SPECTATE_LABEL_";
+const UI_TEAMSWITCH_BUTTON_CANCEL_ID = "UI_TEAMSWITCH_BUTTON_CANCEL_";
+const UI_TEAMSWITCH_BUTTON_CANCEL_LABEL_ID = "UI_TEAMSWITCH_BUTTON_CANCEL_LABEL_";
+const UI_TEAMSWITCH_BUTTON_OPTOUT_ID = "UI_TEAMSWITCH_BUTTON_OPTOUT_";
+const UI_TEAMSWITCH_BUTTON_OPTOUT_LABEL_ID = "UI_TEAMSWITCH_BUTTON_OPTOUT_LABEL_";
+
 
 function createTeamSwitchUI(eventPlayer: mod.Player) {
   let playerId = mod.GetObjId(eventPlayer);
-  const UI_TEAMSWITCH_CONTAINER_BASE_ID = "UI_TEAMSWITCH_CONTAINER_BASE_" + playerId;
-  const UI_TEAMSWITCH_BUTTON_TEAM1_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_" + playerId;
-  const UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID = "UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_" + playerId;
-  const UI_TEAMSWITCH_BUTTON_TEAM2_ID = "UI_TEAMSWITCH_BUTTON_TEAM2_" + playerId;
+  const CONTAINER_BASE_ID = UI_TEAMSWITCH_CONTAINER_BASE_ID + playerId;
+  const BUTTON_TEAM1_ID = UI_TEAMSWITCH_BUTTON_TEAM1_ID + playerId;
+  const BUTTON_TEAM1_LABEL_ID = UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID + playerId;
+  const BUTTON_TEAM2_ID = UI_TEAMSWITCH_BUTTON_TEAM2_ID + playerId;
+  const BUTTON_TEAM2_LABEL_ID = UI_TEAMSWITCH_BUTTON_TEAM2_LABEL_ID + playerId;
+  const BUTTON_SPECTATE_ID = UI_TEAMSWITCH_BUTTON_SPECTATE_ID + playerId;
+  const BUTTON_SPECTATE_LABEL_ID = UI_TEAMSWITCH_BUTTON_SPECTATE_LABEL_ID + playerId;
+  const BUTTON_CACNCEL_ID = UI_TEAMSWITCH_BUTTON_CANCEL_ID + playerId;
+  const BUTTON_CANCEL_LABEL_ID = UI_TEAMSWITCH_BUTTON_CANCEL_LABEL_ID + playerId;
+  const BUTTON_OPTOUT_ID = UI_TEAMSWITCH_BUTTON_OPTOUT_ID + playerId;
+  const BUTTON_OPTOUT_LABEL_ID = UI_TEAMSWITCH_BUTTON_OPTOUT_LABEL_ID + playerId;
 
-  mod.AddUIContainer(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(1300, 700, 0), mod.UIAnchor.Center, mod.GetUIRoot(), true, 10, mod.CreateVector(0, 0, 0), 1, mod.UIBgFill.Blur, eventPlayer);
-  const UI_TEAMSWITCH_CONTAINER_BASE = mod.FindUIWidgetWithName(UI_TEAMSWITCH_CONTAINER_BASE_ID, mod.GetUIRoot());
-  mod.AddUIButton(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(300, 100, 0), mod.UIAnchor.CenterLeft);
-  const UI_TEAMSWITCH_BUTTON_TEAM1 = mod.FindUIWidgetWithName(UI_TEAMSWITCH_BUTTON_TEAM1_ID, mod.GetUIRoot());
-  mod.SetUIWidgetParent(UI_TEAMSWITCH_BUTTON_TEAM1, UI_TEAMSWITCH_CONTAINER_BASE);
-  mod.AddUIText(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID, mod.CreateVector(0, 0, 0), mod.CreateVector(250, 50, 0), mod.UIAnchor.CenterLeft, mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_TEAM1_LABEL));
-  const UI_TEAMSWITCH_BUTTON_TEAM1_LABEL = mod.FindUIWidgetWithName(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL_ID, mod.GetUIRoot());
-  mod.SetUIWidgetParent(UI_TEAMSWITCH_BUTTON_TEAM1_LABEL, UI_TEAMSWITCH_BUTTON_TEAM1);
+  mod.AddUIContainer(
+    CONTAINER_BASE_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(1300, 700, 0),
+    mod.UIAnchor.Center,
+    mod.GetUIRoot(),
+    true,
+    10,
+    mod.CreateVector(0, 0, 0),
+    0.9,
+    mod.UIBgFill.Blur,
+    mod.UIDepth.AboveGameUI,
+    eventPlayer
+  );
+  let CONTAINER_BASE = mod.FindUIWidgetWithName(CONTAINER_BASE_ID, mod.GetUIRoot());
+
+  mod.AddUIButton(
+    BUTTON_TEAM1_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.TopLeft,
+    eventPlayer
+  );
+  let BUTTON_TEAM1 = mod.FindUIWidgetWithName(BUTTON_TEAM1_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(BUTTON_TEAM1, CONTAINER_BASE);
+  mod.SetUIButtonEnabled(BUTTON_TEAM1, !mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(1)));
+  mod.AddUIText(
+    BUTTON_TEAM1_LABEL_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.TopLeft,
+    mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_TEAM1_LABEL),
+    eventPlayer
+  );
+  let BUTTON_TEAM1_LABEL = mod.FindUIWidgetWithName(BUTTON_TEAM1_LABEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetBgAlpha(BUTTON_TEAM1_LABEL, 0);
+  mod.SetUIWidgetParent(BUTTON_TEAM1_LABEL, CONTAINER_BASE);
+
+  mod.AddUIButton(
+    BUTTON_TEAM2_ID,
+    mod.CreateVector(0, 110, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.TopLeft,
+    eventPlayer
+  );
+  let BUTTON_TEAM2 = mod.FindUIWidgetWithName(BUTTON_TEAM2_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(BUTTON_TEAM2, CONTAINER_BASE);
+  mod.SetUIButtonEnabled(BUTTON_TEAM2, !mod.Equals(mod.GetTeam(eventPlayer), mod.GetTeam(2)));
+  mod.AddUIText(
+    BUTTON_TEAM2_LABEL_ID,
+    mod.CreateVector(0, 110, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.TopLeft,
+    mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_TEAM2_LABEL),
+    eventPlayer
+  );
+  let BUTTON_TEAM2_LABEL = mod.FindUIWidgetWithName(BUTTON_TEAM2_LABEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetBgAlpha(BUTTON_TEAM2_LABEL, 0);
+  mod.SetUIWidgetParent(BUTTON_TEAM2_LABEL, CONTAINER_BASE);
+
+  mod.AddUIButton(
+    BUTTON_SPECTATE_ID,
+    mod.CreateVector(0, 220, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.TopLeft,
+    eventPlayer
+  );
+  let BUTTON_SPECTATE = mod.FindUIWidgetWithName(BUTTON_SPECTATE_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(BUTTON_SPECTATE, CONTAINER_BASE);
+  mod.SetUIButtonEnabled(BUTTON_SPECTATE, false); // Spectate not implemented
+  mod.AddUIText(
+    BUTTON_SPECTATE_LABEL_ID,
+    mod.CreateVector(0, 220, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.TopLeft,
+    mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_SPECTATE_LABEL),
+    eventPlayer
+  );
+  let BUTTON_SPECTATE_LABEL = mod.FindUIWidgetWithName(BUTTON_SPECTATE_LABEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetBgAlpha(BUTTON_SPECTATE_LABEL, 0);
+  mod.SetUIWidgetParent(BUTTON_SPECTATE_LABEL, CONTAINER_BASE);
+
+  mod.AddUIButton(
+    BUTTON_CACNCEL_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.BottomRight,
+    eventPlayer
+  );
+  let BUTTON_CANCEL = mod.FindUIWidgetWithName(BUTTON_CACNCEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(BUTTON_CANCEL, CONTAINER_BASE);
+  mod.AddUIText(
+    BUTTON_CANCEL_LABEL_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.BottomRight,
+    mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_CANCEL_LABEL),
+    eventPlayer
+  );
+  let BUTTON_CANCEL_LABEL = mod.FindUIWidgetWithName(BUTTON_CANCEL_LABEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetBgAlpha(BUTTON_CANCEL_LABEL, 0);
+  mod.SetUIWidgetParent(BUTTON_CANCEL_LABEL, CONTAINER_BASE);
+
+  mod.AddUIButton(
+    BUTTON_OPTOUT_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.BottomCenter,
+    eventPlayer
+  );
+  let BUTTON_OPTOUT = mod.FindUIWidgetWithName(BUTTON_OPTOUT_ID, mod.GetUIRoot());
+  mod.SetUIWidgetParent(BUTTON_OPTOUT, CONTAINER_BASE);
+  mod.AddUIText(
+    BUTTON_OPTOUT_LABEL_ID,
+    mod.CreateVector(0, 0, 0),
+    mod.CreateVector(300, 100, 0),
+    mod.UIAnchor.BottomCenter,
+    mod.Message(mod.stringkeys.UI_TEAMSWITCH_BUTTON_OPTOUT_LABEL),
+    eventPlayer
+  );
+  let BUTTON_OPTOUT_LABEL = mod.FindUIWidgetWithName(BUTTON_OPTOUT_LABEL_ID, mod.GetUIRoot());
+  mod.SetUIWidgetBgAlpha(BUTTON_OPTOUT_LABEL, 0);
+  mod.SetUIWidgetParent(BUTTON_OPTOUT_LABEL, CONTAINER_BASE);
 }
 
 //#endregion
 
-//#region Event Handlers
+//#region Global Event Handlers
 
 /**
  * Initialize team switch settings for newly joined players
@@ -219,4 +394,11 @@ export function OnPlayerInteract(eventPlayer: mod.Player, eventInteractPoint: mo
   teamSwitchInteractPointActivated(eventPlayer, eventInteractPoint);
 }
 
+export function OnPlayerUIButtonEvent(
+  eventPlayer: mod.Player,
+  eventUIWidget: mod.UIWidget,
+  eventUIButtonEvent: mod.UIButtonEvent
+) {
+  teamSwitchButtonEvent(eventPlayer, eventUIWidget, eventUIButtonEvent);
+}
 //#endregion
