@@ -1,0 +1,202 @@
+[gd_scene load_steps=9 format=3 uid="uid://cix4gcrw2ftsu"]
+
+[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/HQ_PlayerSpawner.tscn" id="1_o5woq"]
+[ext_resource type="PackedScene" uid="uid://jv31so3xcr7p" path="res://addons/bf_portal/portal_tools/types/PolygonVolume/PolygonVolume.tscn" id="2_tahs8"]
+[ext_resource type="PackedScene" path="res://objects/entities/SpawnPoint.tscn" id="3_tu173"]
+[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/CombatArea.tscn" id="4_4y520"]
+[ext_resource type="PackedScene" path="res://objects/Gameplay/Common/DeployCam.tscn" id="5_6v7fp"]
+[ext_resource type="PackedScene" path="res://static/MP_Granite_TechCampus_Portal_Terrain.tscn" id="6_sl526"]
+[ext_resource type="PackedScene" path="res://static/MP_Granite_TechCampus_Portal_Assets.tscn" id="7_nnhyt"]
+[ext_resource type="PackedScene" path="res://objects/Global/Props/Basketball_01.tscn" id="8_tahs8"]
+
+[node name="MP_Granite_TechCampus_Portal" type="Node3D"]
+
+[node name="TEAM_1_HQ" parent="." node_paths=PackedStringArray("HQArea", "InfantrySpawns") instance=ExtResource("1_o5woq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -425.202, 139.816, 128.736)
+AltTeam = 0
+ObjId = 1
+HQArea = NodePath("HQ_Team1")
+InfantrySpawns = [NodePath("SpawnPoint_1_1"), NodePath("SpawnPoint_1_2"), NodePath("SpawnPoint_1_3"), NodePath("SpawnPoint_1_4")]
+
+[node name="HQ_Team1" parent="TEAM_1_HQ" instance=ExtResource("2_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+points = PackedVector2Array(5, 5, 5, -5, -5, -5, -5, 5)
+
+[node name="SpawnPoint_1_1" parent="TEAM_1_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(0.999884, 0, -0.0152535, 0, 1, 0, 0.0152535, 0, 0.999884, 0, 0, -3)
+
+[node name="SpawnPoint_1_2" parent="TEAM_1_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(-0.9995, 0, -0.0316198, 0, 1, 0, 0.0316198, 0, -0.9995, 3, 0, 0)
+
+[node name="SpawnPoint_1_3" parent="TEAM_1_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(-0.0428871, 0, 0.99908, 0, 1, 0, -0.99908, 0, -0.0428871, -3, 0, 0)
+
+[node name="SpawnPoint_1_4" parent="TEAM_1_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(0.0841819, 0, -0.99645, 0, 1, 0, 0.99645, 0, 0.0841819, 0, 0, 3)
+
+[node name="TEAM_2_HQ" parent="." node_paths=PackedStringArray("HQArea", "InfantrySpawns") instance=ExtResource("1_o5woq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -334.111, 139.951, 107.416)
+Team = 2
+AltTeam = 0
+ObjId = 2
+HQArea = NodePath("HQ_Team2")
+InfantrySpawns = [NodePath("SpawnPoint_2_1"), NodePath("SpawnPoint_2_2"), NodePath("SpawnPoint_2_3"), NodePath("SpawnPoint_2_4")]
+
+[node name="HQ_Team2" parent="TEAM_2_HQ" instance=ExtResource("2_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+points = PackedVector2Array(5, 5, 5, -5, -5, -5, -5, 5)
+
+[node name="SpawnPoint_2_1" parent="TEAM_2_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(0.87795, 0, -0.478754, 0, 1, 0, 0.478754, 0, 0.87795, 0, 0, -3)
+
+[node name="SpawnPoint_2_2" parent="TEAM_2_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(-0.997604, 0, 0.0691822, 0, 1, 0, -0.0691822, 0, -0.997604, 3, 0, 0)
+
+[node name="SpawnPoint_2_3" parent="TEAM_2_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(0.162758, 0, 0.986666, 0, 1, 0, -0.986666, 0, 0.162758, -3, 0, 0)
+
+[node name="SpawnPoint_2_4" parent="TEAM_2_HQ" instance=ExtResource("3_tu173")]
+transform = Transform3D(-0.165771, 0, -0.986164, 0, 1, 0, 0.986164, 0, -0.165771, 0, 0, 3)
+
+[node name="CombatArea" parent="." node_paths=PackedStringArray("CombatVolume") instance=ExtResource("4_4y520")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -193.415, 136.643, 352.408)
+CombatVolume = NodePath("CombatVolume")
+
+[node name="CombatVolume" parent="CombatArea" instance=ExtResource("2_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -187.583, -4.85022, -240.221)
+points = PackedVector2Array(0.436218, 57.1288, 13.5428, 46.3449, 29.5965, 36.2767, 37.2673, 28.4255, 66.2331, -0.753052, 43.1967, -23.8269, 8.22433, -58.8441, -11.201, -52.537, -16.7451, -41.7067, -40.5514, -19.717, -58.3803, 21.2981, -45.4579, 32.1996, -29.6553, 68.5738, -14.7496, 77.4261)
+height = 100.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.101056, 0.994881, 0, -0.994881, 0.101056, -378.949, 501.636, 102.653)
+fov = 1.0
+
+[node name="DeployCam" parent="Camera3D" instance=ExtResource("5_6v7fp")]
+
+[node name="Static" type="Node3D" parent="."]
+
+[node name="MP_Granite_TechCampus_Portal_Terrain" parent="Static" instance=ExtResource("6_sl526")]
+metadata/_edit_lock_ = true
+
+[node name="MP_Granite_TechCampus_Portal_Assets" parent="Static" instance=ExtResource("7_nnhyt")]
+metadata/_edit_lock_ = true
+
+[node name="Basketball_01" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -348.097, 150.854, 94.6743)
+ObjId = 9001
+
+[node name="Basketball_02" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -367.153, 145.276, 94.0984)
+ObjId = 9002
+
+[node name="Basketball_03" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -354.627, 145.302, 97.5286)
+ObjId = 9003
+
+[node name="Basketball_04" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.558, 145.338, 88.0635)
+ObjId = 9004
+
+[node name="Basketball_05" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.558, 145.338, 84.0313)
+ObjId = 9005
+
+[node name="Basketball_06" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -363.504, 145.338, 84.0313)
+ObjId = 9006
+
+[node name="Basketball_07" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -373.761, 145.334, 107.083)
+ObjId = 9007
+
+[node name="Basketball_08" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -387.013, 145.334, 107.083)
+ObjId = 9008
+
+[node name="Basketball_09" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -387.013, 145.334, 130.344)
+ObjId = 9009
+
+[node name="Basketball_10" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -387.013, 145.334, 120.24)
+ObjId = 9010
+
+[node name="Basketball_11" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -412.116, 145.334, 120.24)
+ObjId = 9011
+
+[node name="Basketball_12" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -381.928, 140.22, 142.508)
+ObjId = 9012
+
+[node name="Basketball_13" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -376.992, 145.334, 149.177)
+ObjId = 9013
+
+[node name="Basketball_14" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -386.421, 145.334, 142.076)
+ObjId = 9014
+
+[node name="Basketball_15" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -370.036, 145.334, 137.333)
+ObjId = 9015
+
+[node name="Basketball_16" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -383.181, 145.334, 130.258)
+ObjId = 9016
+
+[node name="Basketball_17" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -428.211, 139.891, 130.258)
+ObjId = 9017
+
+[node name="Basketball_18" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -332.772, 139.891, 105.295)
+ObjId = 9018
+
+[node name="Basketball_19" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -349.994, 139.891, 121.926)
+ObjId = 9019
+
+[node name="Basketball_20" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -361.252, 139.891, 138.145)
+ObjId = 9020
+
+[node name="Basketball_21" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -370.338, 139.891, 150.635)
+ObjId = 9021
+
+[node name="Basketball_22" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -400.169, 139.891, 159.75)
+ObjId = 9022
+
+[node name="Basketball_23" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -413.347, 139.891, 151.314)
+ObjId = 9023
+
+[node name="Basketball_24" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -410.924, 139.891, 137.035)
+ObjId = 9024
+
+[node name="Basketball_25" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -410.924, 139.908, 99.0724)
+ObjId = 9025
+
+[node name="Basketball_26" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -415.75, 139.908, 106.944)
+ObjId = 9026
+
+[node name="Basketball_27" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -391.238, 139.908, 103.791)
+ObjId = 9027
+
+[node name="Basketball_28" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -391.238, 139.908, 84.8655)
+ObjId = 9028
+
+[node name="Basketball_29" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -351.645, 140.097, 84.8655)
+ObjId = 9029
+
+[node name="Basketball_30" parent="." instance=ExtResource("8_tahs8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -358.414, 140.097, 79.8041)
+ObjId = 9030

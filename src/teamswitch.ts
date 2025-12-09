@@ -231,7 +231,7 @@ function createTeamSwitchUI(eventPlayer: mod.Player) {
     true,
     10,
     mod.CreateVector(0, 0, 0),
-    0.9,
+    1,
     mod.UIBgFill.Blur,
     mod.UIDepth.AboveGameUI,
     eventPlayer
