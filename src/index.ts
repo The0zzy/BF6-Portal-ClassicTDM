@@ -20,6 +20,7 @@ interface PlayerStats {
     d: number;
     a: number;
     hs: number;
+    vip: boolean;
 }
 
 //#endregion
@@ -73,6 +74,9 @@ let hasPlayedTime120LeftVO = false;
 let hasPlayedTime30LeftVO = false;
 let hasPlayedTime60LeftVO = false;
 
+let team1VIP: number | null = null;
+let team2VIP: number | null = null;
+
 const winProgressStages = {
     [GAMEMODE_CONFIG.progressStageEarly]: {
         winning: mod.VoiceOverEvents2D.ProgressEarlyWinning,
@@ -90,6 +94,55 @@ const winProgressStages = {
         hasPlayed: false,
     },
 };
+
+//#endregion
+
+//#region VIP Helpers
+
+function setVIP(team: mod.Team, playerId: number | null) {
+    const teamId = team.id;
+    if (teamId === GAMEMODE_CONFIG.team1ID) {
+        if (team1VIP !== null && playersStats[team1VIP]) {
+            playersStats[team1VIP].vip = false;
+            updateScoreboard(playersStats[team1VIP].player, playersStats[team1VIP]);
+        }
+        team1VIP = playerId;
+        if (playerId !== null && playersStats[playerId]) {
+            playersStats[playerId].vip = true;
+            updateScoreboard(playersStats[playerId].player, playersStats[playerId]);
+        }
+    } else if (teamId === GAMEMODE_CONFIG.team2ID) {
+        if (team2VIP !== null && playersStats[team2VIP]) {
+            playersStats[team2VIP].vip = false;
+            updateScoreboard(playersStats[team2VIP].player, playersStats[team2VIP]);
+        }
+        team2VIP = playerId;
+        if (playerId !== null && playersStats[playerId]) {
+            playersStats[playerId].vip = true;
+            updateScoreboard(playersStats[playerId].player, playersStats[playerId]);
+        }
+    }
+}
+
+function selectVIP(team: mod.Team) {
+    const allPlayers = mod.AllPlayers();
+    const allPlayersLength = mod.CountOf(allPlayers);
+    let team1Players: mod.Player[] = []
+    let team2Players: mod.Player[] = []
+    mod.VariableSymbol
+    for (let index = 0; index < allPlayersLength; index++) {
+        const player = mod.ValueInArray(allPlayers, index);
+        team1
+    }
+    if (mod.CountOf(teamPlayers) === 0) {
+        setVIP(team, null);
+        return;
+    }
+    const randomIndex = Math.floor(Math.random() * mod.CountOf(teamPlayers));
+    const vipPlayer = mod.ValueInArray(teamPlayers, randomIndex);
+    const vipId = mod.GetObjId(vipPlayer);
+    setVIP(team, vipId);
+}
 
 //#endregion
 
@@ -230,10 +283,11 @@ function createScoreboard() {
         mod.Message(mod.stringkeys.SCOREBOARD_COLUMN2_HEADER),
         mod.Message(mod.stringkeys.SCOREBOARD_COLUMN3_HEADER),
         mod.Message(mod.stringkeys.SCOREBOARD_COLUMN4_HEADER),
-        mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER)
+        mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER),
+        mod.Message(mod.stringkeys.SCOREBOARD_COLUMN6_HEADER)
     );
     updateScoreboardHeader();
-    mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250);
+    mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250, 100);
     // BUG
     // scoreboard sorting using the two parameter overload is 0-based index but documented as 1-based index
     // scoreboard sorting using the single parameter overload is 1-based index
@@ -598,6 +652,9 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
         d: 0,
         a: 0,
         hs: 0,
+        vip: false,
+        team: mod.GetTeam(eventPlayer).id,
+        player: eventPlayer,
     };
     updateScoreboard(eventPlayer, playersStats[playerId]);
 }
