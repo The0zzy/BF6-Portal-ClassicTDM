@@ -22,6 +22,11 @@ interface PlayerStats {
     hs: number;
 }
 
+interface TeamVariables {
+    vip: mod.Player | null;
+    setVipOnDeploy: boolean;
+}
+
 //#endregion
 
 //#region Config
@@ -61,6 +66,7 @@ const UIWIDGET_SCORE_FIRSTTO_ID = "UiWidgetFirstTo";
 const spawners: mod.Vector[] = [];
 
 const playersStats: { [id: number]: PlayerStats } = {};
+const teamVariables: { [id: number]: TeamVariables } = {};
 
 let gameStarted = false;
 let gameEnded = false;
@@ -72,10 +78,6 @@ let tick = 0;
 let hasPlayedTime120LeftVO = false;
 let hasPlayedTime30LeftVO = false;
 let hasPlayedTime60LeftVO = false;
-
-let team1VIP: number | null = null;
-let team2VIP: number | null = null;
-let setVipOnDeploy: boolean = false;
 
 const winProgressStages = {
     [GAMEMODE_CONFIG.progressStageEarly]: {
@@ -99,51 +101,44 @@ const winProgressStages = {
 
 //#region VIP Helpers
 
-function setVIP(team: mod.Team, playerId: number | null) {
-    const teamId = team.id;
-    if (teamId === GAMEMODE_CONFIG.team1ID) {
-        if (team1VIP !== null && playersStats[team1VIP]) {
-            playersStats[team1VIP].vip = false;
-            updateScoreboard(playersStats[team1VIP].player, playersStats[team1VIP]);
-        }
-        team1VIP = playerId;
-        if (playerId !== null && playersStats[playerId]) {
-            playersStats[playerId].vip = true;
-            updateScoreboard(playersStats[playerId].player, playersStats[playerId]);
-        }
-    } else if (teamId === GAMEMODE_CONFIG.team2ID) {
-        if (team2VIP !== null && playersStats[team2VIP]) {
-            playersStats[team2VIP].vip = false;
-            updateScoreboard(playersStats[team2VIP].player, playersStats[team2VIP]);
-        }
-        team2VIP = playerId;
-        if (playerId !== null && playersStats[playerId]) {
-            playersStats[playerId].vip = true;
-            updateScoreboard(playersStats[playerId].player, playersStats[playerId]);
+function initTeamVariables(team: mod.Team) {
+    let teamId = mod.GetObjId(team);
+    if (teamId in teamVariables) {
+        return;
+    } else {
+        teamVariables[teamId] = {
+            setVipOnDeploy: false,
+            vip: null,
         }
     }
+}
+
+function setVIP(team: mod.Team, player: mod.Player | null) {
+    const teamId = mod.GetObjId(team);
+    if (player === null) {
+        teamVariables[teamId].setVipOnDeploy = true;
+    }
+    teamVariables[teamId].vip = player;
 }
 
 function selectVIP(team: mod.Team) {
     const allPlayers = mod.AllPlayers();
     const allPlayersLength = mod.CountOf(allPlayers);
-    let selectablePlayers: mod.Player[] = []
-    mod.VariableSymbol
+    let selectablePlayers: mod.Array = mod.EmptyArray();
+    let vip: mod.Player | null = null;
+
     for (let index = 0; index < allPlayersLength; index++) {
         const player = mod.ValueInArray(allPlayers, index);
         if (mod.Equals(mod.GetTeam(player), team) && mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) {
-            selectablePlayers[selectablePlayers.length] = player;
+            selectablePlayers = mod.AppendToArray(selectablePlayers, player);
         }
     }
 
-    if (selectablePlayers.length === 0) {
-        setVipOnDeploy = true;
-        return;
+    if (mod.CountOf(selectablePlayers) > 0) {
+        vip = mod.RandomValueInArray(selectablePlayers);
     }
-    const randomIndex = Math.floor(Math.random() * selectablePlayers.length);
-    const vipPlayer = selectablePlayers[randomIndex];
-    const vipId = mod.GetObjId(vipPlayer);
-    setVIP(team, vipId);
+
+    setVIP(team, vip);
 }
 
 //#endregion
@@ -208,7 +203,8 @@ function playProgressSFX(team1: mod.Team, team2: mod.Team) {
 //#region Spawn Point Helpers
 
 function getFurthestSpawnPointFromEnemies(
-    respawnedPlayer: mod.Player
+    respawnedPlayer: mod.Player,
+    rangeMultiplier: number
 ): mod.Vector {
     const enemyTeam = mod.Equals(mod.GetTeam(respawnedPlayer), mod.GetTeam(1))
         ? mod.GetTeam(2)
@@ -241,7 +237,7 @@ function getFurthestSpawnPointFromEnemies(
         }
     }
     const availableSpawns = spawnsMap.filter(
-        ({ distance }) => distance >= furthestSpawnPointDistance * 0.8
+        ({ distance }) => distance >= furthestSpawnPointDistance * rangeMultiplier
     );
 
     // We want a spawn that is among the furthest 20% from enemies, so we randomize among those
@@ -285,11 +281,10 @@ function createScoreboard() {
         mod.Message(mod.stringkeys.SCOREBOARD_COLUMN2_HEADER),
         mod.Message(mod.stringkeys.SCOREBOARD_COLUMN3_HEADER),
         mod.Message(mod.stringkeys.SCOREBOARD_COLUMN4_HEADER),
-        mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER),
-        mod.Message(mod.stringkeys.SCOREBOARD_COLUMN6_HEADER)
+        mod.Message(mod.stringkeys.SCOREBOARD_COLUMN5_HEADER)
     );
     updateScoreboardHeader();
-    mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250, 100);
+    mod.SetScoreboardColumnWidths(100, 100, 100, 250, 250);
     // BUG
     // scoreboard sorting using the two parameter overload is 0-based index but documented as 1-based index
     // scoreboard sorting using the single parameter overload is 1-based index
@@ -647,6 +642,7 @@ export async function OnGameModeStarted() {
 }
 
 export function OnPlayerJoinGame(eventPlayer: mod.Player) {
+    initTeamVariables(mod.GetTeam(eventPlayer));
     mod.SetRedeployTime(eventPlayer, 0);
     const playerId = mod.GetObjId(eventPlayer);
     playersStats[playerId] = {
@@ -654,16 +650,13 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
         d: 0,
         a: 0,
         hs: 0,
-        vip: false,
-        team: mod.GetTeam(eventPlayer).id,
-        player: eventPlayer,
     };
     updateScoreboard(eventPlayer, playersStats[playerId]);
 }
 
 export function OnPlayerDeployed(eventPlayer: mod.Player) {
     if (gameStarted) {
-        mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer), 0);
+        mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer, 0.8), 0);
     }
 
     if (GAMEMODE_CONFIG.maxStartingAmmo) {
