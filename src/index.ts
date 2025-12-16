@@ -20,7 +20,6 @@ interface PlayerStats {
     d: number;
     a: number;
     hs: number;
-    vip: boolean;
 }
 
 //#endregion
@@ -76,6 +75,7 @@ let hasPlayedTime60LeftVO = false;
 
 let team1VIP: number | null = null;
 let team2VIP: number | null = null;
+let setVipOnDeploy: boolean = false;
 
 const winProgressStages = {
     [GAMEMODE_CONFIG.progressStageEarly]: {
@@ -127,19 +127,21 @@ function setVIP(team: mod.Team, playerId: number | null) {
 function selectVIP(team: mod.Team) {
     const allPlayers = mod.AllPlayers();
     const allPlayersLength = mod.CountOf(allPlayers);
-    let team1Players: mod.Player[] = []
-    let team2Players: mod.Player[] = []
+    let selectablePlayers: mod.Player[] = []
     mod.VariableSymbol
     for (let index = 0; index < allPlayersLength; index++) {
         const player = mod.ValueInArray(allPlayers, index);
-        team1
+        if (mod.Equals(mod.GetTeam(player), team) && mod.GetSoldierState(player, mod.SoldierStateBool.IsAlive)) {
+            selectablePlayers[selectablePlayers.length] = player;
+        }
     }
-    if (mod.CountOf(teamPlayers) === 0) {
-        setVIP(team, null);
+
+    if (selectablePlayers.length === 0) {
+        setVipOnDeploy = true;
         return;
     }
-    const randomIndex = Math.floor(Math.random() * mod.CountOf(teamPlayers));
-    const vipPlayer = mod.ValueInArray(teamPlayers, randomIndex);
+    const randomIndex = Math.floor(Math.random() * selectablePlayers.length);
+    const vipPlayer = selectablePlayers[randomIndex];
     const vipId = mod.GetObjId(vipPlayer);
     setVIP(team, vipId);
 }
