@@ -24,7 +24,7 @@ interface PlayerStats {
 
 interface TeamVariables {
     vip: mod.Player | null;
-    setVipOnDeploy: boolean;
+    vipId: number;
 }
 
 //#endregion
@@ -107,18 +107,16 @@ function initTeamVariables(team: mod.Team) {
         return;
     } else {
         teamVariables[teamId] = {
-            setVipOnDeploy: false,
             vip: null,
+            vipId: -1,
         }
     }
 }
 
 function setVIP(team: mod.Team, player: mod.Player | null) {
     const teamId = mod.GetObjId(team);
-    if (player === null) {
-        teamVariables[teamId].setVipOnDeploy = true;
-    }
     teamVariables[teamId].vip = player;
+    teamVariables[teamId].vipId = (player === null) ? -1 : mod.GetObjId(player);
 }
 
 function selectVIP(team: mod.Team) {
@@ -139,6 +137,12 @@ function selectVIP(team: mod.Team) {
     }
 
     setVIP(team, vip);
+}
+
+function initVips() {
+    for (const teamId in teamVariables) {
+        selectVIP(mod.GetTeam(parseInt(teamId)));
+    }
 }
 
 //#endregion
@@ -637,6 +641,8 @@ export async function OnGameModeStarted() {
 
     await mod.Wait(GAMEMODE_CONFIG.freezeTime);
     gameStarted = true;
+    initVips();
+
     playVO(mod.VoiceOverEvents2D.RoundStartGeneric);
     deleteTimerWidget();
 }
@@ -771,6 +777,12 @@ export function OngoingGlobal() {
             mod.GetTeam(GAMEMODE_CONFIG.team1ID),
             mod.GetTeam(GAMEMODE_CONFIG.team2ID)
         );
+    }
+
+    for (const teamId in teamVariables) {
+        if (teamVariables[teamId].vip !== null && mod.IsPlayerValid(teamVariables[teamId].vip)) {
+            mod.SpotTarget(teamVariables[teamId].vip, 1);
+        }
     }
 
     updateTimerText(
