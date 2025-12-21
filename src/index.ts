@@ -747,6 +747,10 @@ export function OnPlayerUndeploy(eventPlayer: mod.Player) {
     const eventPlayerId = mod.GetObjId(eventPlayer);
     playersStats[eventPlayerId].d++;
     updateScoreboard(eventPlayer, playersStats[eventPlayerId]);
+    if (teamVariables[mod.GetObjId(mod.GetTeam(eventPlayer))].vipId === eventPlayerId) {
+        setVIP(mod.GetTeam(eventPlayer), null);
+        selectVIP(mod.GetTeam(eventPlayer));
+    }
 }
 
 //#endregion
@@ -795,6 +799,9 @@ export function OngoingGlobal() {
     for (const teamId in teamVariables) {
         if (teamVariables[teamId].vip !== null && mod.IsPlayerValid(teamVariables[teamId].vip)) {
             mod.SpotTarget(teamVariables[teamId].vip, 1);
+            console.log("VIP is valid and spotted for team ID: " + teamId);
+        } else {
+            console.log("VIP is null or invalid for team ID: " + teamId);
         }
     }
 
