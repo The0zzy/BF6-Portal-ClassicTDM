@@ -114,12 +114,15 @@ function initTeamVariables(team: mod.Team) {
 }
 
 function setVIP(team: mod.Team, player: mod.Player | null) {
+    console.log("Setting VIP...");
     const teamId = mod.GetObjId(team);
     teamVariables[teamId].vip = player;
     teamVariables[teamId].vipId = (player === null) ? -1 : mod.GetObjId(player);
+    console.log("Set VIP for team ID " + teamId + " to player ID " + teamVariables[teamId].vipId);
 }
 
 function selectVIP(team: mod.Team) {
+    console.log("Selecting VIP...");
     const allPlayers = mod.AllPlayers();
     const allPlayersLength = mod.CountOf(allPlayers);
     let selectablePlayers: mod.Array = mod.EmptyArray();
@@ -131,7 +134,7 @@ function selectVIP(team: mod.Team) {
             selectablePlayers = mod.AppendToArray(selectablePlayers, player);
         }
     }
-
+    console.log("Found " + mod.CountOf(selectablePlayers) + " selectable players for VIP.");
     if (mod.CountOf(selectablePlayers) > 0) {
         vip = mod.RandomValueInArray(selectablePlayers);
     }
