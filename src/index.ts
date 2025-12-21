@@ -33,9 +33,9 @@ interface TeamVariables {
 
 /* Mode config - Only modify what's inside this object */
 const GAMEMODE_CONFIG: GameModeConfig = {
-    score: 75, // 75 kills to win
+    score: 15, // kills to win
     freezeTime: 15, // Seconds of freeze time at round start
-    timeLimit: 10 * 60 + 15, // 10 minutes + freeze time
+    timeLimit: (20 * 60) + 15, // minutes + freeze time
     progressStageEarly: 20, // How many kills to trigger early progress VO
     progressStageMid: 40, // How many kills to trigger mid progress VO
     progressStageLate: 65, // How many kills to trigger late progress VO
@@ -663,6 +663,9 @@ export function OnPlayerJoinGame(eventPlayer: mod.Player) {
 export function OnPlayerDeployed(eventPlayer: mod.Player) {
     if (gameStarted) {
         mod.Teleport(eventPlayer, getFurthestSpawnPointFromEnemies(eventPlayer, 0.8), 0);
+        if (teamVariables[mod.GetObjId(mod.GetTeam(eventPlayer))].vip === null) {
+            selectVIP(mod.GetTeam(eventPlayer));
+        }
     }
 
     if (GAMEMODE_CONFIG.maxStartingAmmo) {
@@ -681,6 +684,12 @@ export function OnPlayerDeployed(eventPlayer: mod.Player) {
 
 export function OnPlayerLeaveGame(eventNumber: number) {
     delete playersStats[eventNumber];
+    for (const teamId in teamVariables) {
+        if (teamVariables[teamId].vipId === eventNumber) {
+            setVIP(mod.GetTeam(parseInt(teamId)), null);
+            selectVIP(mod.GetTeam(parseInt(teamId)));
+        }
+    }
 }
 
 export function OnPlayerEarnedKill(
@@ -709,7 +718,11 @@ export function OnPlayerEarnedKill(
         ? 1
         : 0;
 
-    mod.SetGameModeScore(playerTeam, mod.GetGameModeScore(playerTeam) + 1);
+    if (teamVariables[mod.GetObjId(otherPlayerTeam)].vipId === mod.GetObjId(eventOtherPlayer)) {
+        setVIP(otherPlayerTeam, null);
+        selectVIP(otherPlayerTeam);
+        mod.SetGameModeScore(playerTeam, mod.GetGameModeScore(playerTeam) + 1);
+    }
     updateScoreboard(eventPlayer, playersStats[playerId]);
     updateScoreboardHeader();
     updateUIScore();
